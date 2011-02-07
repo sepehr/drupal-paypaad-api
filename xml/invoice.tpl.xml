@@ -10,6 +10,6 @@
  buyer_name="%buyer_name%"
  buyer_tel="%buyer_tel%"
  delivery_days="%delivery_days%">
-   %items%
-</invoice>
+ %items%
+ </invoice>
 
