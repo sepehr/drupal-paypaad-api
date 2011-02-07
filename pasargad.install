@@ -9,7 +9,7 @@
 /**
  * Implements hook_install().
  */
-function pasargad_api_install() {
+function pasargad_install() {
 
 }
 
@@ -17,7 +17,7 @@ function pasargad_api_install() {
 /**
  * Implements hook_uninstall().
  */
-function pasargad_api_uninstall() {
+function pasargad_uninstall() {
 
 }
 

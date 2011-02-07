@@ -6,12 +6,23 @@
  * Contains Pasargad Bank Payment API implementations and helpers.
  */
 
+function pasargad_init() {
+  $r = array(
+    'a'=>'1',
+    'b'=>'2'
+  );
+
+  $x = _pasargad_xml_build($r, 'invoice', NULL, FALSE);
+  dpr($x);
+  die();
+}
+
 /**
  * API function to create content's XML representation.
  *
  * @param $content
  *   An array of required content items as per defined in gateway docs.
- *   - time_stamp: Request date in "Y/m/d H:i:s" format. (optional)
+ *   - time_stamp: Request date in PHP's "Y/m/d H:i:s" format. (optional)
  *   - invoice_date: Invoice date in an optional format. (optional)
  *   - invoice_number: Invoice number.
  *   - merchant_code: Store merchant code as per provided by Pasargad Bank.
@@ -152,6 +163,7 @@ function _pasargard_curl($destination, $params = '') {
  */
 function _pasargad_xml_build(&$array, $root = 'invoice', &$XMLElement = NULL, $object = FALSE) {
   // Turn off Zend Engine compatibility mode.
+  // @see http://php.net/manual/en/ini.core.php
   if (ini_get('zend.ze1_compatibility_mode')) {
     ini_set('zend.ze1_compatibility_mode', 0);
   }
