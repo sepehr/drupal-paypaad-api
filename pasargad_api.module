@@ -132,15 +132,50 @@ function _pasargard_curl($destination, $params = '') {
 }
 
 /**
- * Internal helper to convert an array to XML.
+ * Internal helper to convert an array to its corresponding XML.
  *
  * @param $array
  *   An array to be converted to XML.
+ * @param $root
+ *   XML root node name.
+ * @param $XMLElement
+ *   If $array is a multi-dimension array, $xml contains
+ *   previous level SimpleXMLElement object.
+ * @param $object
+ *   Whether to to return the XML object or its corresponding string.
  *
  * @return
- *   Generated XML.
+ *   $array corresponding XML.
+ *
+ * @see http://php.net/manual/en/book.simplexml.php
+ * @see http://www.php.net/manual/en/class.simplexmlelement.php
  */
-function _pasargad_xml_build($array) {
+function _pasargad_xml_build(&$array, $root = 'invoice', &$XMLElement = NULL, $object = FALSE) {
+  // Turn off Zend Engine compatibility mode.
+  if (ini_get('zend.ze1_compatibility_mode')) {
+    ini_set('zend.ze1_compatibility_mode', 0);
+  }
 
+  // First time here? Instantiate a SimpleXMLElement object.
+  if (is_null($XMLElement)) {
+    $XMLElement = simplexml_load_string('<?xml version version="1.0" encoding="UTF-8"><' . $root . ' />');
+  }
+
+  // Walk though the array.
+  foreach ($array as $key => $value) {
+    // Remove XML illigal chars from $key.
+    $key = preg_replace('/[^a-z0-9\-\_\.\:]/', '', $key);
+    // For multi-dimension arrays, walk recursive.
+    if (is_array($value)) {
+      _pasargad_xml_build($value, $root, $XMLElement->addChild());
+    }
+    // Otherwise, simply append.
+    else {
+      $XMLElement->addChild($key, check_plain($value));
+    }
+  }
+
+  // Return the generated XML as requested.
+  return $object ? $XMLElement : $XMLElement->asXML();
 }
 
