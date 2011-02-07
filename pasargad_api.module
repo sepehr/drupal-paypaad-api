@@ -6,3 +6,81 @@
  * Contains Pasargad Bank Payment API implementations and helpers.
  */
 
+/**
+ * API function to create content's XML representation.
+ *
+ * @param $content
+ *   An array of required content items as per defined in gateway docs.
+ *
+ * @return
+ *   XML representation of passed $content.
+ *
+ * @see http://developers.paypaad.ir/docs/readme.pdf
+ */
+function pasargad_xml($content) {
+
+}
+
+/**
+ * API function to sign XML representation of content.
+ *
+ * @param $xml
+ *   XML representation of required content as per defined in docs.
+ * @param $private_key
+ *   Accessible system path to private key file.
+ *
+ * @return
+ *   Either signed XML content or FALSE on fail.
+ *
+ * @see pasargad_xml()
+ * @see http://developers.paypaad.ir/docs/readme.pdf
+ */
+function pasargad_sign($xml, $private_key) {
+
+}
+
+/**
+ * API function to request Pasargad Bank gateway.
+ *
+ * @param $gateway
+ *   Pasargad Bank gateway controller URI.
+ *
+ * @return
+ *   An array of request response.
+ *
+ * @see http://developers.paypaad.ir/docs/readme.pdf
+ */
+function pasargad_request($gateway = 'https://paypaad.bankpasargad.com/PaymentController') {
+
+}
+
+/**
+ * API function to request Pasargad Bank gateway.
+ *
+ * @param $gateway
+ *   Pasargad Bank gateway trace URI.
+ *
+ * @return
+ *   An array of request response.
+ *
+ * @see http://developers.paypaad.ir/docs/readme.pdf
+ */
+function pasargad_trace($gateway = 'https://paypaad.bankpasargad.com/PaymentTrace') {
+
+}
+
+/**
+ * Internal helper to perform a cURL POST request.
+ *
+ * @param $url
+ *   cURL destination URL.
+ * @param $params
+ *   POST parameters to be sent.
+ *
+ * @return
+ *   Either the request response or FALSE on fail.
+ */
+function _pasargard_curl($url, $params = NULL) {
+
+}
+
