@@ -72,15 +72,41 @@ function pasargad_trace($gateway = 'https://paypaad.bankpasargad.com/PaymentTrac
 /**
  * Internal helper to perform a cURL POST request.
  *
- * @param $url
- *   cURL destination URL.
+ * @param $destination
+ *   cURL destination URI.
  * @param $params
- *   POST parameters to be sent.
+ *   An array of POST parameters to be sent.
  *
  * @return
  *   Either the request response or FALSE on fail.
+ *
+ * @see pasargad_trace()
+ * @see pasargad_request()
+ * @see http://php.net/manual/en/function.curl-setopt.php
  */
-function _pasargard_curl($url, $params = NULL) {
+function _pasargard_curl($destination, $params = array()) {
+  // cURL is a dependency.
+  if (!extension_loaded('curl')) {
+    return FALSE;
+  }
 
+  // Initiate cURL session, set options.
+  $curl = curl_init();
+  curl_setopt($curl, CURLOPT_URL, $destination);
+  curl_setopt($curl, CURLOPT_HEADER, FALSE);
+  curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+  // Follow any "Location: " header,
+  // CURLOPT_MAXREDIRS won't be set.
+  curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+  // Set POST request options.
+  curl_setopt($curl, CURLOPT_POST, TRUE);CURLOPT_MAXREDIRS
+  curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+  // Run rabbit, run!
+  $response = curl_exec($curl);
+
+  // Close the session & return the response.
+  curl_close($curl);
+  return (string) $response;
 }
 
