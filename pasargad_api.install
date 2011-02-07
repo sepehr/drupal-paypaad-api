@@ -1,0 +1,23 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Contains un/installation hook implementations.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function pasargad_api_install() {
+
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function pasargad_api_uninstall() {
+
+}
+
