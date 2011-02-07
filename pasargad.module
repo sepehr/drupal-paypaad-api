@@ -24,7 +24,7 @@
  *   - buyer_tel: Customer contact tel.
  *   - delivery_address: Products delivery address.
  * @param $items
- *   Either an array of product arrays, or an array of product objects
+ *   An array of product arrays/objects or a single product array/object,
  *   which will be injected into $content array as per defined in docs.
  *   - content: Product title.
  *   - count: Number of purchased products.
@@ -33,7 +33,7 @@
  *   - description: Product description.
  *
  * @return
- *   XML representation of passed arguments or FALSE on fail.
+ *   XML representation of passed arguments or FALSE on fail.$items
  *
  * @see _pasargad_xml_build()
  * @see http://developers.paypaad.ir/docs/readme.pdf
@@ -43,12 +43,15 @@ function pasargad_xml(&$content, $items = array()) {
   if (count($content) < 10) {
     return FALSE;
   }
-
   // Default value for time_stamp, if not set.
   $content['time_stamp'] = $content['time_stamp'] ? $content['time_stamp'] : date('Y/m/d H:i:s');
   // Default value for invoice_date, if not set.
   $content['invoice_date'] = $content['invoice_date'] ? $content['invoice_date'] : format_date(time());
-
+  // Wrap single product array/object to be prepared to be built.
+  if (!empty($items) && (is_object($items) || !is_array($items[0]))) {
+    $items = array($items);
+  }
+  // Build and return.
   return _pasargad_xml_build($content, $items);
 }
 
@@ -163,12 +166,13 @@ function _pasargard_curl($destination, $params = '') {
 function _pasargad_xml_build(&$content, &$items, $validate = FALSE) {
   // XML document header.
   $xml = '<?xml version="1.0" encoding="UTF-8" ?>';
+  // In case of empty $items, remove %items% placeholder.
+  $content['items'] = '';
   // Walk through the products array.
   if (!empty($items)) {
     $count = 1;
-    $content['items'] = '';
     foreach ($items as $index => $product) {
-      $content['items'] .= _pasargad_xml_template_load($product, 'item');
+      $content['items'] .= _pasargad_xml_template_load((array) $product, 'item');
     }
   }
   // Build invoice XML body.
@@ -307,8 +311,6 @@ function _pasargad_xml_validate($xml, $root = 'invoice', $dtd_path = FALSE) {
 ################test
 function pasargad_init() {
   $i = array(
-    'time_stamp' => date('Y/m/d H:i:s'),
-    'invoice_date' => '1389/12/14',
     'invoice_number' => '1234',
     'terminal_code' => '1402411829',
     'merchant_code' => '124017944',
@@ -338,9 +340,9 @@ function pasargad_init() {
      'description' => 'Most Expensive Product Eva II!',
     ),
   );
-  $r = _pasargad_xml_build($i, $p);
+  $r = pasargad_xml($i, $p[0]);
   var_dump($r);
-  dpr($r);
+  dpr(str_replace('>', ">\n", $r));
   die();
 }
 
