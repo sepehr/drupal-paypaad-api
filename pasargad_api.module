@@ -29,7 +29,7 @@
  *   - content: Product title.
  *   - count: Number of purchased products.
  *   - fee: Price of product unit.
- *   - amount: fee * count.
+ *   - amount: fee x count amount.
  *   - description: Product description.
  *
  * @return
@@ -129,5 +129,18 @@ function _pasargard_curl($destination, $params = '') {
   // Close the session & return the response.
   curl_close($curl);
   return (string) $response;
+}
+
+/**
+ * Internal helper to convert an array to XML.
+ *
+ * @param $array
+ *   An array to be converted to XML.
+ *
+ * @return
+ *   Generated XML.
+ */
+function _pasargad_xml_build($array) {
+
 }
 
