@@ -11,13 +11,33 @@
  *
  * @param $content
  *   An array of required content items as per defined in gateway docs.
+ *   - time_stamp: Request date in "Y/m/d H:i:s" format. (optional)
+ *   - invoice_date: Invoice date in an optional format. (optional)
+ *   - invoice_number: Invoice number.
+ *   - merchant_code: Store merchant code as per provided by Pasargad Bank.
+ *   - terminal_code: Store terminal code as per provided by Pasargad Bank.
+ *   - redirect_address: Operation success URL.
+ *   - referer_address: Operation failure URL.
+ *   - delivery_days: Number of days in which the products will be delivered.
+ *   - total_amount: Order total amount.
+ *   - buyer_name: Customer name.
+ *   - buyer_tel: Customer contact tel.
+ *   - delivery_address: Products delivery address.
+ * @param $items
+ *   Either an array of product arrays, or an array of product objects
+ *   which will be injected into $content array as per defined in docs.
+ *   - content: Product title.
+ *   - count: Number of purchased products.
+ *   - fee: Price of product unit.
+ *   - amount: fee * count.
+ *   - description: Product description.
  *
  * @return
- *   XML representation of passed $content.
+ *   XML representation of passed arguments.
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_xml($content) {
+function pasargad_xml($content, $items = array()) {
 
 }
 
@@ -97,7 +117,7 @@ function _pasargard_curl($destination, $params = '') {
   curl_setopt($curl, CURLOPT_HEADER, FALSE);
   curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-  // Follow any 'Location: ' header,
+  // Follow any 'Location:' header,
   // CURLOPT_MAXREDIRS won't be set.
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
   // Set POST request options.
