@@ -1,0 +1,8 @@
+<item number="%number%">
+<content>%content%</content>
+<count>%count%</count>
+<fee>%fee%</fee>
+<amount>%amount%</amount>
+<description>%description%</description>
+</item>
+

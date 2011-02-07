@@ -1,0 +1,15 @@
+<invoice time_stamp="%time_stamp%"
+ invoice_date="%invoice_date%"
+ invoice_number="%invoice_number%"
+ terminal_code="%terminal_code%"
+ merchant_code="%merchant_code%"
+ redirect_address="%redirect_address%"
+ referer_address="%referer_address%"
+ delivery_address="%delivery_address%"
+ total_amount="%total_amount%"
+ buyer_name="%buyer_name%"
+ buyer_tel="%buyer_tel%"
+ delivery_days="%delivery_days%">
+   %items%
+</invoice>
+

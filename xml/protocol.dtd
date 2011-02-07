@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!ELEMENT invoice (item+)>
+<!ATTLIST invoice 
+			merchant_code		CDATA	#REQUIRED
+			terminal_code		CDATA	#REQUIRED
+			buyer_name			CDATA	#REQUIRED
+			buyer_tel			CDATA	#REQUIRED
+			delivery_address	CDATA	#REQUIRED
+			delivery_days		CDATA	#REQUIRED
+			redirect_address	CDATA	#REQUIRED
+			referer_address		CDATA	#REQUIRED
+			time_stamp			CDATA	#REQUIRED
+			invoice_date		CDATA	#REQUIRED
+			invoice_number		CDATA	#REQUIRED
+			total_amount		CDATA	#REQUIRED>
+
+<!ELEMENT item (content, count, fee, amount, description)>
+<!ATTLIST item 
+			number 	CDATA	#REQUIRED>
+
+<!ELEMENT content (#PCDATA)>
+<!ATTLIST content
+			id		ID		#IMPLIED>
+
+<!ELEMENT count (#PCDATA)>
+<!ATTLIST count
+			id		ID		#IMPLIED>
+			
+<!ELEMENT fee (#PCDATA)>
+<!ATTLIST fee
+			id		ID		#IMPLIED>
+			
+<!ELEMENT amount (#PCDATA)>
+<!ATTLIST amount
+			id		ID		#IMPLIED>
+
+<!ELEMENT description (#PCDATA)>
+<!ATTLIST description
+			id		ID		#IMPLIED>
+			
