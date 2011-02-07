@@ -1,5 +1,6 @@
 ; $Id$
 name = "Pasargad Bank Payment API"
 description = "Standalone implementation of Pasargad Bank Payment API, feeding others."
+php = 5.0
 core = 6.x
 
