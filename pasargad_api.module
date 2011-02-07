@@ -75,7 +75,8 @@ function pasargad_trace($gateway = 'https://paypaad.bankpasargad.com/PaymentTrac
  * @param $destination
  *   cURL destination URI.
  * @param $params
- *   An array of POST parameters to be sent.
+ *   Parameters to be sent in a HTTP POST operation,
+ *   As per defined in CURLOPT_POSTFIELDS docs.
  *
  * @return
  *   Either the request response or FALSE on fail.
@@ -84,7 +85,7 @@ function pasargad_trace($gateway = 'https://paypaad.bankpasargad.com/PaymentTrac
  * @see pasargad_request()
  * @see http://php.net/manual/en/function.curl-setopt.php
  */
-function _pasargard_curl($destination, $params = array()) {
+function _pasargard_curl($destination, $params = '') {
   // cURL is a dependency.
   if (!extension_loaded('curl')) {
     return FALSE;
@@ -96,11 +97,11 @@ function _pasargard_curl($destination, $params = array()) {
   curl_setopt($curl, CURLOPT_HEADER, FALSE);
   curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-  // Follow any "Location: " header,
+  // Follow any 'Location: ' header,
   // CURLOPT_MAXREDIRS won't be set.
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
   // Set POST request options.
-  curl_setopt($curl, CURLOPT_POST, TRUE);CURLOPT_MAXREDIRS
+  curl_setopt($curl, CURLOPT_POST, TRUE);
   curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
   // Run rabbit, run!
   $response = curl_exec($curl);
