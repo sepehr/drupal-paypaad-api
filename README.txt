@@ -6,7 +6,7 @@ Drupal implementation of Pasargad Bank Payment API, feeding pay-pasargad and uc-
 
 Requirements
 ============
-- PHP > 5.0
+- PHP >= 5.0
 - PHP cURL Extension
 - PHP OpenSSL Extension
 
