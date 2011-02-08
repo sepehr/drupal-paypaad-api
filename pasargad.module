@@ -7,10 +7,25 @@
  */
 
 /**
+ * Defines API version.
+ */
+define('PASARGAD_API_VERSION', 2);
+
+/**
+ * Defines gateway default transaction trace URI.
+ */
+define('PASARGAD_TRACE_URI', 'https://paypaad.bankpasargad.com/PaymentTrace');
+
+/**
+ * Defines gateway default controller URI.
+ */
+define('PASARGAD_CONTROLLER_URI', 'https://paypaad.bankpasargad.com/PaymentController');
+
+/**
  * API function to create invoice content's XML representation.
  *
  * @param $content
- *   An array of required content items as per defined in gateway docs.
+ *   An array of required content items as per defined in gateway docs, v2.
  *   - time_stamp: Request date in PHP's "Y/m/d H:i:s" format. (optional)
  *   - invoice_date: Invoice date in an optional format. (optional)
  *   - invoice_number: Invoice number.
@@ -25,7 +40,7 @@
  *   - delivery_address: Products delivery address.
  * @param $items
  *   An array of product arrays/objects or a single product array/object,
- *   which will be injected into $content array as per defined in docs.
+ *   which will be injected into $content array as per defined in docs, v2.
  *   - content: Product title.
  *   - count: Number of purchased products.
  *   - fee: Price of product unit.
@@ -47,7 +62,7 @@ function pasargad_xml(&$content, $items = array()) {
   $content['time_stamp'] = $content['time_stamp'] ? $content['time_stamp'] : date('Y/m/d H:i:s');
   // Default value for invoice_date, if not set.
   $content['invoice_date'] = $content['invoice_date'] ? $content['invoice_date'] : format_date(time());
-  // Wrap single product array/object to be prepared to be built.
+  // Wrap a single product array/object to be prepared to be built.
   if (!empty($items) && (is_object($items) || !is_array($items[0]))) {
     $items = array($items);
   }
@@ -56,21 +71,51 @@ function pasargad_xml(&$content, $items = array()) {
 }
 
 /**
- * API function to sign XML representation of content.
+ * API function that signs XML representation of content.
  *
  * @param $xml
- *   XML representation of required content as per defined in docs.
- * @param $private_key
- *   Accessible system path to private key file.
+ *   Valid XML representation of content as per defined in docs, v2.
+ * @param $private
+ *   Private key as per required by openssl_pkey_get_private().
+ * @param $passphrase
+ *   Private key passphrase in case that the $private is encrypted.
+ * @param $public
+ *   Optional public key as per required by openssl_verify(),
+ *   if set, generated signature will be passed through openssl_verify() to
+ *   get verified. Note that $public format differs from the $private one and
+ *   should be a openssl_pkey_get_public() valid output or the operation fails.
+ *   Am lazy, ya!
  *
  * @return
  *   Either signed XML content or FALSE on fail.
  *
  * @see pasargad_xml()
+ * @see http://php.net/manual/en/book.openssl.php
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_sign($xml, $private_key) {
+function pasargad_sign($xml, $private, $passphrase = '', $public = FALSE) {
+  // Fail if OpenSSL extension is not loaded.
+  if (!extension_loaded('openssl')) {
+    return FALSE;
+  }
 
+  // Get private key if possible.
+  if ($private = openssl_pkey_get_private($private, $passphrase)) {
+    $sign = '';
+    // Generate the signature if possible.
+    if (openssl_sign($xml, $sign, $private)) {
+      // Verify the signature using public pair, if requested so.
+      if (!$public || openssl_verify($xml, $sign, $public) === 1) {
+        // Gateway requires a Base64 encoded string
+        // of the generated signature, see docs v2, p3.
+        return base64_encode($sign);
+      }
+    }
+    // Free $private from memory.
+    openssl_free_key($private);
+  }
+  // Operation failed.
+  return FALSE;
 }
 
 /**
@@ -84,7 +129,7 @@ function pasargad_sign($xml, $private_key) {
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_request($gateway = 'https://paypaad.bankpasargad.com/PaymentController') {
+function pasargad_request($gateway = PASARGAD_CONTROLLER_URI) {
 
 }
 
@@ -99,7 +144,7 @@ function pasargad_request($gateway = 'https://paypaad.bankpasargad.com/PaymentCo
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_trace($gateway = 'https://paypaad.bankpasargad.com/PaymentTrace') {
+function pasargad_trace($gateway = PASARGAD_TRACE_URI) {
 
 }
 
