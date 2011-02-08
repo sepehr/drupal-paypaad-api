@@ -4,12 +4,14 @@
 /**
  * @file
  * Contains Pasargad Bank Payment API implementations and helpers.
+ * @todo
+ * Hook designation.
  */
 
 /**
  * Defines API version.
  */
-define('PASARGAD_API_VERSION', 2);
+define('PASARGAD_API_VERSION', '2.0');
 
 /**
  * Defines gateway default transaction trace URI.
@@ -119,22 +121,73 @@ function pasargad_sign($xml, $private, $passphrase = '', $public = FALSE) {
 }
 
 /**
- * API function to request Pasargad Bank gateway.
+ * API function to dispatch a HTTP POSTrequest to gateway.
  *
+ * @param $content
+ *   Valid XML representation of invoice as per described in docs, v2, p3.
+ * @param $sign
+ *   Verified signed $content, see docs, v2, p3.
  * @param $gateway
  *   Pasargad Bank gateway controller URI.
+ *
+ * @return
+ *   FALSE on fail.
+ *
+ * @see pasargad_xml()
+ * @see pasargad_sign()
+ * @see http://developers.paypaad.ir/docs/readme.pdf
+ */
+function pasargad_request($content, $sign, $gateway = PASARGAD_CONTROLLER_URI) {
+  // Partially check requirements.
+  if (empty($content) || empty($sign)) {
+    return FALSE;
+  }
+  // Setting POST parameters.
+  $params = array('content' => $content, 'sign' => $sign);
+  // Dispatch HTTP POST Request.
+  // In case of an internal failure, this will
+  // return FALSE & in an external case, the customer
+  // will be redirected in the referer_address URI
+  // defined in $content. Finally if the request verified
+  // at the gateway side & everything goes well, the customer
+  // will be redirected to redirect_address specified in $content.
+  return _pasargard_curl($gateway, $params);
+}
+
+/**
+ * API function to return a request response.
+ *
+ * @param $status
+ *   Indicates what situation we're in.
+ *   - failed: Indicates transaction failure.
+ *   - successed: The transaction was successfull, so gateway
+ *     has sent following elements via HTTP POST. See docs, v2, p6.
+ *     - iD: Invoice date.
+ *     - iN: Invoice number.
+ *     - tref: Transaction reference as shown to our customer.
  *
  * @return
  *   An array of request response.
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_request($gateway = PASARGAD_CONTROLLER_URI) {
+function pasargad_response($status) {
+  switch ($status) {
+    case 'failed':
+      return FALSE;
 
+    case 'successed':
+      // TODO: Sanitize.
+      return array(
+        'invoice_date' => $_POST['iD'],
+        'invoice_number' => $_POST['iN'],
+        'transaction_reference' => $_POST['tref'],
+      );
+  }
 }
 
 /**
- * API function to request Pasargad Bank gateway.
+ * API function to trace back a transaction status.
  *
  * @param $reference
  *   Transaction reference number.
