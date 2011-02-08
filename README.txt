@@ -4,6 +4,10 @@ Description
 ===========
 Drupal implementation of Pasargad Bank Payment API, feeding pay-pasargad and uc-pasargad modules.
 
+NOTICE
+======
+THAT'S IN EARLY DEVELOPMENT STAGE AND IS ABSOLUTELY NOT READY FOR PRODUCTION.
+
 Requirements
 ============
 - PHP >= 5.0
