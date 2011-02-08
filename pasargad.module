@@ -157,6 +157,8 @@ function pasargad_response($status) {
  *   - fee: Price of product unit.
  *   - amount: fee x count amount.
  *   - description: Product description.
+ * @param $validate
+ *   Whether to validate the generated XML against its DTD.
  *
  * @return
  *   XML representation of passed arguments or FALSE on fail.$items
@@ -164,7 +166,7 @@ function pasargad_response($status) {
  * @see _pasargad_xml_build()
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_xml(&$content, $items = array()) {
+function pasargad_xml(&$content, $items = array(), $validate = FALSE) {
   // Not enough minerals?!
   if (count($content) < 10) {
     return FALSE;
@@ -180,7 +182,7 @@ function pasargad_xml(&$content, $items = array()) {
     $items = array($items);
   }
   // Build and return.
-  return _pasargad_xml_build($content, $items);
+  return _pasargad_xml_build($content, $items, $validate);
 }
 
 /**
