@@ -136,16 +136,40 @@ function pasargad_request($gateway = PASARGAD_CONTROLLER_URI) {
 /**
  * API function to request Pasargad Bank gateway.
  *
+ * @param $reference
+ *   Transaction reference number.
+ * @param $alternative
+ *   An array of following data to be used in case
+ *   that $reference is not available, see docs, v2, p6.
+ *   - invoice_number
+ *   - invoice_date
+ *   - merchant_code
+ *   - terminal_code
  * @param $gateway
  *   Pasargad Bank gateway trace URI.
+ * @param $parse
+ *   Whether to parse response to an object.
  *
  * @return
- *   An array of request response.
+ *   Request response consists of following parameters
+ *   or FALSE in case of operation failure.
+ *   - trace_number
+ *   - reference_number
+ *   - transaction_date
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_trace($gateway = PASARGAD_TRACE_URI) {
-
+function pasargad_trace($reference, $alternative = array(), $gateway = PASARGAD_TRACE_URI, $parse = TRUE) {
+  // Partially check requirements.
+  if (!$reference && count($alternative) < 4) {
+    return FALSE;
+  }
+  // Setting POST parameters.
+  $params = $reference ? array($reference) : $alternative;
+  // Dispatch HTTP POST Request.
+  $response = _pasargard_curl($gateway, $params);
+  // Return response as per requested.
+  return $parse ? simplexml_load_string($response) : $response;
 }
 
 /**
@@ -158,7 +182,7 @@ function pasargad_trace($gateway = PASARGAD_TRACE_URI) {
  *   As per defined in CURLOPT_POSTFIELDS docs.
  *
  * @return
- *   Either the request response or FALSE on fail.
+ *   Either the request response string or FALSE on fail.
  *
  * @see pasargad_trace()
  * @see pasargad_request()
@@ -185,8 +209,9 @@ function _pasargard_curl($destination, $params = '') {
   // Run rabbit, run!
   $response = curl_exec($curl);
 
-  // Close the session & return the response.
+  // Close the session.
   curl_close($curl);
+  // And return the response.
   return (string) $response;
 }
 
