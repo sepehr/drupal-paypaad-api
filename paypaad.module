@@ -3,7 +3,8 @@
 
 /**
  * @file
- * Contains Pasargad Bank Payment API implementations and helpers.
+ * Contains Pasargad Bank Paypaad Payment API implementations and helpers.
+ *
  * @todo
  * Hook designation.
  */
@@ -11,42 +12,42 @@
 /**
  * Defines API version.
  */
-define('PASARGAD_API_VERSION', '2.0');
+define('PAYPAAD_API_VERSION', '2.0');
 
 /**
  * Defines gateway default transaction trace URI.
  */
-define('PASARGAD_TRACE_URI', 'https://paypaad.bankpasargad.com/PaymentTrace');
+define('PAYPAAD_TRACE_URI', 'https://paypaad.bankpasargad.com/PaymentTrace');
 
 /**
  * Defines gateway default controller URI.
  */
-define('PASARGAD_CONTROLLER_URI', 'https://paypaad.bankpasargad.com/PaymentController');
+define('PAYPAAD_CONTROLLER_URI', 'https://paypaad.bankpasargad.com/PaymentController');
 
 /**
- * API function to dispatch a HTTP POSTrequest to gateway.
+ * API function to dispatch a HTTP POST request to gateway.
  *
  * @param $content
  *   Valid XML representation of invoice as per described in docs, v2, p3.
  * @param $sign
  *   Verified signed $content, see docs, v2, p3.
  * @param $gateway
- *   Pasargad Bank gateway controller URI.
+ *   Paypaad gateway controller URI.
  *
  * @return
  *   FALSE on fail.
  *
- * @see pasargad_xml()
- * @see pasargad_sign()
+ * @see paypaad_xml()
+ * @see paypaad_sign()
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_request($content, $sign, $gateway = PASARGAD_CONTROLLER_URI) {
+function paypaad_request($content, $sign, $gateway = PAYPAAD_CONTROLLER_URI) {
   // Partially check requirements.
   if (empty($content) || empty($sign)) {
     return FALSE;
   }
   // Load internal helpers.
-  module_load_include('inc', 'pasargad');
+  module_load_include('inc', 'paypaad');
   // Setting POST parameters.
   $params = array('content' => $content, 'sign' => $sign);
   // Dispatch HTTP POST Request.
@@ -72,7 +73,7 @@ function pasargad_request($content, $sign, $gateway = PASARGAD_CONTROLLER_URI) {
  *   - merchant_code
  *   - terminal_code
  * @param $gateway
- *   Pasargad Bank gateway trace URI.
+ *   Paypaad gateway trace URI.
  * @param $parse
  *   Whether to parse response to an object.
  *
@@ -85,13 +86,13 @@ function pasargad_request($content, $sign, $gateway = PASARGAD_CONTROLLER_URI) {
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_trace($reference, $alternative = array(), $gateway = PASARGAD_TRACE_URI, $parse = TRUE) {
+function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TRACE_URI, $parse = TRUE) {
   // Partially check requirements.
   if (!$reference && count($alternative) < 4) {
     return FALSE;
   }
   // Load internal helpers.
-  module_load_include('inc', 'pasargad');
+  module_load_include('inc', 'paypaad');
   // Setting POST parameters.
   $params = $reference ? array($reference) : $alternative;
   // Dispatch HTTP POST request.
@@ -117,7 +118,7 @@ function pasargad_trace($reference, $alternative = array(), $gateway = PASARGAD_
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_response($status) {
+function paypaad_response($status) {
   switch ($status) {
     case 'failed':
       return FALSE;
@@ -140,8 +141,8 @@ function pasargad_response($status) {
  *   - time_stamp: Request date in PHP's "Y/m/d H:i:s" format. (optional)
  *   - invoice_date: Invoice date in an optional format. (optional)
  *   - invoice_number: Invoice number.
- *   - merchant_code: Store merchant code as per provided by Pasargad Bank.
- *   - terminal_code: Store terminal code as per provided by Pasargad Bank.
+ *   - merchant_code: Store merchant code as per provided by Paypaad.
+ *   - terminal_code: Store terminal code as per provided by Paypaad.
  *   - redirect_address: Operation success URL.
  *   - referer_address: Operation failure URL.
  *   - delivery_days: Number of days in which the products will be delivered.
@@ -163,16 +164,16 @@ function pasargad_response($status) {
  * @return
  *   XML representation of passed arguments or FALSE on fail.$items
  *
- * @see _pasargad_xml_build()
+ * @see _paypaad_xml_build()
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_xml(&$content, $items = array(), $validate = FALSE) {
+function paypaad_xml(&$content, $items = array(), $validate = FALSE) {
   // Not enough minerals?!
   if (count($content) < 10) {
     return FALSE;
   }
   // Load internal helpers.
-  module_load_include('inc', 'pasargad');
+  module_load_include('inc', 'paypaad');
   // Default value for time_stamp, if not set.
   $content['time_stamp'] = $content['time_stamp'] ? $content['time_stamp'] : date('Y/m/d H:i:s');
   // Default value for invoice_date, if not set.
@@ -182,7 +183,7 @@ function pasargad_xml(&$content, $items = array(), $validate = FALSE) {
     $items = array($items);
   }
   // Build and return.
-  return _pasargad_xml_build($content, $items, $validate);
+  return _paypaad_xml_build($content, $items, $validate);
 }
 
 /**
@@ -204,11 +205,11 @@ function pasargad_xml(&$content, $items = array(), $validate = FALSE) {
  * @return
  *   Either signed XML content or FALSE on fail.
  *
- * @see pasargad_xml()
+ * @see paypaad_xml()
  * @see http://php.net/manual/en/book.openssl.php
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function pasargad_sign($xml, $private, $passphrase = '', $public = FALSE) {
+function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
   // Fail if OpenSSL extension is not loaded.
   if (!extension_loaded('openssl')) {
     return FALSE;

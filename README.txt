@@ -2,7 +2,7 @@
 
 Description
 ===========
-Drupal implementation of Pasargad Bank Payment API, feeding pay-pasargad and uc-pasargad modules.
+Drupal implementation of Pasargad Bank Paypaad Payment API, feeding pay-paypaad and uc-paypaad modules.
 
 NOTICE
 ======

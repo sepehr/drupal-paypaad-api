@@ -3,16 +3,16 @@
 
 /**
  * @file
- * Contains a collection of Pasargad Bank Payment API internal helpers.
+ * Contains a collection of Pasargad Bank Paypaad Payment API internal helpers.
  */
 
 /**
  * Internal helper to build XML string as per required by gateway.
  *
  * @param $content
- *   Invoice array as per documented in pasargad_xml().
+ *   Invoice array as per documented in paypaad_xml().
  * @param $items
- *   Products array as per documented in pasargad_xml().
+ *   Products array as per documented in paypaad_xml().
  * @param $validate
  *   Whether to validate the generated XML using gateway
  *   provided DTD or not.
@@ -20,11 +20,11 @@
  * @return
  *   $array corresponding XML.
  *
- * @see pasargad_xml()
- * @see _pasargad_xml_validate()
- * @see _pasargad_xml_template_load()
+ * @see paypaad_xml()
+ * @see _paypaad_xml_validate()
+ * @see _paypaad_xml_template_load()
  */
-function _pasargad_xml_build(&$content, &$items, $validate = FALSE) {
+function _paypaad_xml_build(&$content, &$items, $validate = FALSE) {
   // XML document header.
   $xml = '<?xml version="1.0" encoding="UTF-8" ?>';
   // In case of empty $items, remove %items% placeholder.
@@ -33,15 +33,15 @@ function _pasargad_xml_build(&$content, &$items, $validate = FALSE) {
   if (!empty($items)) {
     $count = 1;
     foreach ($items as $index => $product) {
-      $content['items'] .= _pasargad_xml_template_load((array) $product, 'item');
+      $content['items'] .= _paypaad_xml_template_load((array) $product, 'item');
     }
   }
   // Build invoice XML body.
-  $xml .= _pasargad_xml_template_load($content, 'invoice');
+  $xml .= _paypaad_xml_template_load($content, 'invoice');
 
   // Validate generated XML against its DTD, if requested so.
   if ($validate) {
-    return _pasargad_xml_validate($xml) ? $xml : FALSE;
+    return _paypaad_xml_validate($xml) ? $xml : FALSE;
   }
   return $xml;
 }
@@ -55,19 +55,19 @@ function _pasargad_xml_build(&$content, &$items, $validate = FALSE) {
  *   with the value of 'blah' key in the $data array.
  * @param $template
  *   XML template identifier to load its string with $data.
- *   Accepted values are as per documented in _pasargad_xml_template().
+ *   Accepted values are as per documented in _paypaad_xml_template().
  * @param $eol_strip
  *   Whether to strip OS EOL chars or not.
  *
  * @return
  *   Either the requested XML template or FALSE on fail.
  *
- * @see _pasargad_xml_build()
- * @see _pasargad_xml_template()
+ * @see _paypaad_xml_build()
+ * @see _paypaad_xml_template()
  */
-function _pasargad_xml_template_load($data, $template, $eol_strip = TRUE) {
+function _paypaad_xml_template_load($data, $template, $eol_strip = TRUE) {
   // Get XML template string.
-  $template = _pasargad_xml_template($template, $eol_strip);
+  $template = _paypaad_xml_template($template, $eol_strip);
   // Not enough minerals?!
   if (!$data || !$template) {
     return FALSE;
@@ -94,15 +94,15 @@ function _pasargad_xml_template_load($data, $template, $eol_strip = TRUE) {
  * @return
  *   Either the requested XML template or FALSE on fail.
  *
- * @see _pasargad_xml_build()
+ * @see _paypaad_xml_build()
  */
-function _pasargad_xml_template($id, $eol_strip = TRUE) {
+function _paypaad_xml_template($id, $eol_strip = TRUE) {
   static $templates = array();
 
   // Implementing static cache.
   if (!$templates[$id]) {
     // Get requested XML template path.
-    $path = drupal_get_path('module', 'pasargad') . "/xml/$id.tpl.xml";
+    $path = drupal_get_path('module', 'paypaad') . "/xml/$id.tpl.xml";
     // Check if the XML template file is readable.
     if (is_readable($path)) {
       $templates[$id] = file_get_contents($path);
@@ -128,7 +128,7 @@ function _pasargad_xml_template($id, $eol_strip = TRUE) {
  * @return
  *   Boolean value.
  *
- * @see _pasargad_xml_build()
+ * @see _paypaad_xml_build()
  * @see http://php.net/manual/en/class.domdocument.php
  * @see http://us.php.net/manual/en/domdocument.schemavalidate.php
  *
@@ -136,9 +136,9 @@ function _pasargad_xml_template($id, $eol_strip = TRUE) {
  *   If possible, generate appropriate XSD file and
  *   validate against that using DOMDocument::schemaValidate.
  */
-function _pasargad_xml_validate($xml, $root = 'invoice', $dtd_path = FALSE) {
+function _paypaad_xml_validate($xml, $root = 'invoice', $dtd_path = FALSE) {
   // Check DTD file path.
-  $dtd_path = $dtd_path ? $dtd_path : drupal_get_path('module', 'pasargad') . '/xml/protocol.dtd';
+  $dtd_path = $dtd_path ? $dtd_path : drupal_get_path('module', 'paypaad') . '/xml/protocol.dtd';
   if (!is_readable($dtd_path)) {
     return FALSE;
   }
@@ -182,8 +182,8 @@ function _pasargad_xml_validate($xml, $root = 'invoice', $dtd_path = FALSE) {
  * @return
  *   Either the request response string or FALSE on fail.
  *
- * @see pasargad_trace()
- * @see pasargad_request()
+ * @see paypaad_trace()
+ * @see paypaad_request()
  * @see http://php.net/manual/en/function.curl-setopt.php
  */
 function _pasargard_curl($destination, $params = '') {
