@@ -25,42 +25,6 @@ define('PAYPAAD_TRACE_URI', 'https://paypaad.bankpasargad.com/PaymentTrace');
 define('PAYPAAD_CONTROLLER_URI', 'https://paypaad.bankpasargad.com/PaymentController');
 
 /**
- * API function to dispatch a HTTP POST request to gateway.
- *
- * @param $content
- *   Valid XML representation of invoice as per described in docs, v2, p3.
- * @param $sign
- *   Verified signed $content, see docs, v2, p3.
- * @param $gateway
- *   Paypaad gateway controller URI.
- *
- * @return
- *   FALSE on fail.
- *
- * @see paypaad_xml()
- * @see paypaad_sign()
- * @see http://developers.paypaad.ir/docs/readme.pdf
- */
-function paypaad_request($content, $sign, $gateway = PAYPAAD_CONTROLLER_URI) {
-  // Partially check requirements.
-  if (empty($content) || empty($sign)) {
-    return FALSE;
-  }
-  // Load internal helpers.
-  module_load_include('inc', 'paypaad');
-  // Setting POST parameters.
-  $params = array('content' => $content, 'sign' => $sign);
-  // Dispatch HTTP POST Request.
-  // In case of an internal failure, this will
-  // return FALSE & in an external case, the customer
-  // will be redirected in the referer_address URI
-  // defined in $content. Finally if the request verified
-  // at the gateway side & everything goes well, the customer
-  // will be redirected to redirect_address specified in $content.
-  return _pasargard_curl($gateway, $params);
-}
-
-/**
  * API function to trace back a transaction status.
  *
  * @param $reference
