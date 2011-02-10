@@ -215,19 +215,19 @@ function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
  *   Field injected $form array!
  */
 function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
-  // Paypaad merchant code.
+  // Paypaad 9-digit merchant code.
   $form["{$id}_merchant"] = array(
     '#type' => 'textfield',
-    '#title' => t('Merchant Code'),
-    '#description' => t('Enter the merchant code provided by Pasargad Bank.'),
+    '#title' => t('Merchant code'),
+    '#description' => t('Enter the 9-digit merchant code provided by Pasargad Bank.'),
     '#default_value' => variable_get("{$id}_merchant", ''),
     '#required' => TRUE,
   );
-  // Paypaad terminal code.
+  // Paypaad 10-digit terminal code.
   $form["{$id}_terminal"] = array(
     '#type' => 'textfield',
-    '#title' => t('Terminal Code'),
-    '#description' => t('Enter the terminal code provided by Pasargad Bank.'),
+    '#title' => t('Terminal code'),
+    '#description' => t('Enter the 10-digit terminal code provided by Pasargad Bank.'),
     '#default_value' => variable_get("{$id}_terminal", ''),
     '#required' => TRUE,
   );
@@ -240,29 +240,29 @@ function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
     '#required' => TRUE,
   );
   // Key pair options.
-  $form['additional'] = array(
+  $form['keys'] = array(
     '#type' => 'fieldset',
     '#title' => t('Key options'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
   // Private PEM key path.
-  $form["{$id}_key_private"] = array(
+  $form['keys']["{$id}_key_private"] = array(
     '#type' => 'textfield',
     '#title' => t('Private key file'),
     '#description' => t('Accessible absolute system path to your private key PEM file.'),
-    '#default_value' => variable_get("{$id}_private_key", ''),
+    '#default_value' => variable_get("{$id}_key_private", ''),
     '#required' => TRUE,
   );
   // Private PEM key path.
-  $form["{$id}_key_passphrase"] = array(
+  $form['keys']["{$id}_key_passphrase"] = array(
     '#type' => 'textfield',
-    '#title' => t('Private key file'),
+    '#title' => t('Private key passphrase'),
     '#description' => t('Private key passphrase in case that your key file is encrypted.'),
     '#default_value' => variable_get("{$id}_key_passphrase", ''),
   );
   // Private PEM key path.
-  $form["{$id}_key_public"] = array(
+  $form['keys']["{$id}_key_public"] = array(
     '#type' => 'textfield',
     '#title' => t('Public key file'),
     '#description' => t('Optional accessible absolute system path to your public key PEM file for verification purposes.'),
