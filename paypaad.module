@@ -239,3 +239,162 @@ function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
   return FALSE;
 }
 
+/**
+ * UI helper function that injects required settings fields into the passed form.
+ *
+ * @param $form
+ *   Form (sub)array.
+ * @param $id
+ *   Module identifier used as field name prefix.
+ *
+ * @return
+ *   Field injected $form array!
+ */
+function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
+  // Paypaad merchant code.
+  $form["{$id}_merchant"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Merchant Code'),
+    '#description' => t('Enter the merchant code provided by Pasargad Bank.'),
+    '#default_value' => variable_get("{$id}_merchant", ''),
+    '#required' => TRUE,
+  );
+  // Paypaad terminal code.
+  $form["{$id}_terminal"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Terminal Code'),
+    '#description' => t('Enter the terminal code provided by Pasargad Bank.'),
+    '#default_value' => variable_get("{$id}_terminal", ''),
+    '#required' => TRUE,
+  );
+  // Maximum product delivery days.
+  $form["{$id}_max_delivery_days"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of delivery days'),
+    '#description' => t('Maximum number of days in which the product will be delivered to customer.'),
+    '#default_value' => variable_get("{$id}_max_delivery_days", ''),
+    '#required' => TRUE,
+  );
+  // Key pair options.
+  $form['additional'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Key options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  // Private PEM key path.
+  $form["{$id}_key_private"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Private key file'),
+    '#description' => t('Accessible absolute system path to your private key PEM file.'),
+    '#default_value' => variable_get("{$id}_private_key", ''),
+    '#required' => TRUE,
+  );
+  // Private PEM key path.
+  $form["{$id}_key_passphrase"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Private key file'),
+    '#description' => t('Private key passphrase in case that your key file is encrypted.'),
+    '#default_value' => variable_get("{$id}_key_passphrase", ''),
+  );
+  // Private PEM key path.
+  $form["{$id}_key_public"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Public key file'),
+    '#description' => t('Optional accessible absolute system path to your public key PEM file for verification purposes.'),
+    '#default_value' => variable_get("{$id}_key_public", ''),
+  );
+  // Paypaad gateway URIs.
+  $form['additional'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Additional options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  // Paypaad gateway trace URI.
+  $form['additional']["{$id}_trace_uri"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Paypaad gateway controller URI'),
+    '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
+    '#default_value' => variable_get("{$id}_trace_uri", PAYPAAD_TRACE_URI),
+    '#required' => TRUE,
+  );
+  // Paypaad gateway controller URI.
+  $form['additional']["{$id}_controller_uri"] = array(
+    '#type' => 'textfield',
+    '#title' => t('Paypaad gateway controller URI'),
+    '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
+    '#default_value' => variable_get("{$id}_controller_uri", PAYPAAD_CONTROLLER_URI),
+    '#required' => TRUE,
+  );
+
+  return $form;
+}
+
+/**
+ * UI helper for Paypaad settings form validation process.
+ *
+ * @param $form
+ *   Form array as provided to a form validation callback.
+ * @param $form_state
+ *   Form state array as provided to a form validation callback.
+ */
+function paypaad_settings_fields_validate($form, &$form_state, $id = 'paypaad') {
+  // Check merchant code for a 9-digit number.
+  if (!ctype_digit($form_state['values']["{$id}_merchant"]) || !isset($form_state['values']["{$id}_merchant"][8])) {
+    form_set_error("{$id}_merchant", t('Paypaad merchant code must be a 9-digit numeric value.'));
+  }
+  // Check terminal code for a 10-digit number.
+  if (!ctype_digit($form_state['values']["{$id}_terminal"]) || !isset($form_state['values']["{$id}_terminal"][9])) {
+    form_set_error("{$id}_terminal", t('Paypaad terminal code must be a 10-digit numeric value.'));
+  }
+  // Check delivery days for a positive number.
+  if (!ctype_digit($form_state['values']["{$id}_max_delivery_days"])) {
+    form_set_error("{$id}_max_delivery_days", t('Maximum delivery days must be a positive number.'));
+  }
+  // Check private key file path.
+  if (!is_readable($form_state['values']["{$id}_key_private"])) {
+    form_set_error("{$id}_key_private", t('Private key file is not a valid readable file.'));
+  }
+  // Check public key file path, if set.
+  if (!empty($form_state['values']["{$id}_key_public"]) && !is_readable($form_state['values']["{$id}_key_public"])) {
+    form_set_error("{$id}_key_public", t('Public key file is not a valid readable file.'));
+  }
+  // Check gateway trace URL.
+  if (!valid_url($form_state['values']["{$id}_trace_uri"], TRUE)) {
+    form_set_error("{$id}_trace_uri", t('Paypaad gateway trace URI must be a valid URL.'));
+  }
+  // Check gateway controller URL.
+  if (!valid_url($form_state['values']["{$id}_controller_uri"], TRUE)) {
+    form_set_error("{$id}_controller_uri", t('Paypaad gateway controller URI must be a valid URL.'));
+  }
+}
+
+/**
+ * UI helper that injects required hidden fields to the passed form (sub)array.
+ *
+ * @param $content
+ *   XML representation of invoice.
+ * @param $sign
+ *   Signed copy of invoice XML.
+ * @param $form
+ *   Form (sub)array.
+ *
+ * @return
+ *   Field injected form (sub)array.
+ */
+function paypaad_hidden_fields($content, $sign, &$form = array()) {
+  // Inject XML representation of invoice.
+  $form['content'] = array(
+    '#type' => 'hidden',
+    '#value' => $content,
+  );
+  // Then the signed copy.
+  $form['sign'] = array(
+    '#type' => 'hidden',
+    '#value' => $sign,
+  );
+
+  return $form;
+}
+
