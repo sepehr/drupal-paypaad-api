@@ -150,9 +150,11 @@ function paypaad_response($status) {
  *   - buyer_name: Customer name.
  *   - buyer_tel: Customer contact tel.
  *   - delivery_address: Products delivery address.
+ *   - items: An array of products information as described below.
  * @param $items
  *   An array of product arrays/objects or a single product array/object,
  *   which will be injected into $content array as per defined in docs, v2.
+ *   Please note that if $content['items'] is set, this parameter will be ignored.
  *   - content: Product title.
  *   - count: Number of purchased products.
  *   - fee: Price of product unit.
@@ -174,6 +176,9 @@ function paypaad_xml(&$content, $items = array(), $validate = FALSE) {
   }
   // Load internal helpers.
   module_load_include('inc', 'paypaad');
+  // Get the items array. Any "items" element in content will overwrite the passed $items.
+  $items = (isset($content['items']) && !empty($content['items'])) ? $content['items'] : $items;
+  unset($content['items']);
   // Default value for time_stamp, if not set.
   $content['time_stamp'] = $content['time_stamp'] ? $content['time_stamp'] : date('Y/m/d H:i:s');
   // Default value for invoice_date, if not set.
