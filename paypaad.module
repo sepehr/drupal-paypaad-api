@@ -120,10 +120,10 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
  */
 function paypaad_response($status) {
   switch ($status) {
-    case 'failed':
+    case 'fail':
       return FALSE;
 
-    case 'successed':
+    case 'success':
       // TODO: Sanitize.
       return array(
         'invoice_date' => $_POST['iD'],
