@@ -106,7 +106,7 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
  *
  * @param $status
  *   Indicates what situation we're in.
- *   - failed: Indicates transaction failure.
+ *   - failure: Indicates transaction failure.
  *   - successed: The transaction was successfull, so gateway
  *     has sent following elements via HTTP POST. See docs, v2, p6.
  *     - iD: Invoice date.
@@ -120,7 +120,7 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
  */
 function paypaad_response($status) {
   switch ($status) {
-    case 'fail':
+    case 'failure':
       return FALSE;
 
     case 'success':
