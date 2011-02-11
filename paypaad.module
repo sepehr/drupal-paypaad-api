@@ -208,7 +208,7 @@ function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
  * @return
  *   Settings value or FALSE on fail.
  */
-function paypaad_settings($name, $id, $default = FALSE) {
+function paypaad_settings($name, $id, $default = '') {
   return variable_get("{$id}_paypaad_{$name}", $default);
 }
 
@@ -224,10 +224,8 @@ function paypaad_settings($name, $id, $default = FALSE) {
  *   Field injected $form array!
  */
 function paypaad_settings_fields(&$form, $id) {
-  // Prepend callee identifier.
-  $id = $id . '_paypaad';
   // Paypaad 9-digit merchant code.
-  $form["{$id}_merchant"] = array(
+  $form["{$id}_paypaad_merchant"] = array(
     '#type' => 'textfield',
     '#title' => t('Merchant code'),
     '#description' => t('Enter the 9-digit merchant code provided by Pasargad Bank.'),
@@ -235,7 +233,7 @@ function paypaad_settings_fields(&$form, $id) {
     '#required' => TRUE,
   );
   // Paypaad 10-digit terminal code.
-  $form["{$id}_terminal"] = array(
+  $form["{$id}_paypaad_terminal"] = array(
     '#type' => 'textfield',
     '#title' => t('Terminal code'),
     '#description' => t('Enter the 10-digit terminal code provided by Pasargad Bank.'),
@@ -243,7 +241,7 @@ function paypaad_settings_fields(&$form, $id) {
     '#required' => TRUE,
   );
   // Maximum product delivery days.
-  $form["{$id}_delivery_days"] = array(
+  $form["{$id}_paypaad_delivery_days"] = array(
     '#type' => 'textfield',
     '#title' => t('Maximum number of delivery days'),
     '#description' => t('Maximum number of days in which the product will be delivered to customer.'),
@@ -258,7 +256,7 @@ function paypaad_settings_fields(&$form, $id) {
     '#collapsed' => TRUE,
   );
   // Private PEM key path.
-  $form['keys']["{$id}_key_private"] = array(
+  $form['keys']["{$id}_paypaad_key_private"] = array(
     '#type' => 'textfield',
     '#title' => t('Private key file'),
     '#description' => t('Accessible absolute system path to your private key PEM file.'),
@@ -266,14 +264,14 @@ function paypaad_settings_fields(&$form, $id) {
     '#required' => TRUE,
   );
   // Passphrase in case that the private key is encrypted.
-  $form['keys']["{$id}_key_passphrase"] = array(
+  $form['keys']["{$id}_paypaad_key_passphrase"] = array(
     '#type' => 'textfield',
     '#title' => t('Private key passphrase'),
     '#description' => t('Private key passphrase in case that your key file is encrypted.'),
     '#default_value' => paypaad_settings('key_passphrase', $id, ''),
   );
   // Public PEM key path.
-  $form['keys']["{$id}_key_public"] = array(
+  $form['keys']["{$id}_paypaad_key_public"] = array(
     '#type' => 'textfield',
     '#title' => t('Public key file'),
     '#description' => t('Optional accessible absolute system path to your public key PEM file for verification purposes.'),
@@ -287,7 +285,7 @@ function paypaad_settings_fields(&$form, $id) {
     '#collapsed' => TRUE,
   );
   // Paypaad gateway trace URI.
-  $form['additional']["{$id}_trace_uri"] = array(
+  $form['additional']["{$id}_paypaad_trace_uri"] = array(
     '#type' => 'textfield',
     '#title' => t('Paypaad gateway controller URI'),
     '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
@@ -295,7 +293,7 @@ function paypaad_settings_fields(&$form, $id) {
     '#required' => TRUE,
   );
   // Paypaad gateway controller URI.
-  $form['additional']["{$id}_controller_uri"] = array(
+  $form['additional']["{$id}_paypaad_controller_uri"] = array(
     '#type' => 'textfield',
     '#title' => t('Paypaad gateway controller URI'),
     '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
@@ -315,35 +313,33 @@ function paypaad_settings_fields(&$form, $id) {
  *   Form state array as provided to a form validation callback.
  */
 function paypaad_settings_fields_validate($form, &$form_state, $id) {
-  // Prepend callee identifier.
-  $id = $id . '_paypaad';
   // Check merchant code for a 9-digit number.
-  if (!ctype_digit($form_state['values']["{$id}_merchant"]) || !isset($form_state['values']["{$id}_merchant"][8])) {
-    form_set_error("{$id}_merchant", t('Paypaad merchant code must be a 9-digit numeric value.'));
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_merchant"]) || !isset($form_state['values']["{$id}_paypaad_merchant"][8])) {
+    form_set_error("{$id}_paypaad_merchant", t('Paypaad merchant code must be a 9-digit numeric value.'));
   }
   // Check terminal code for a 10-digit number.
-  if (!ctype_digit($form_state['values']["{$id}_terminal"]) || !isset($form_state['values']["{$id}_terminal"][9])) {
-    form_set_error("{$id}_terminal", t('Paypaad terminal code must be a 10-digit numeric value.'));
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_terminal"]) || !isset($form_state['values']["{$id}_paypaad_terminal"][9])) {
+    form_set_error("{$id}_paypaad_terminal", t('Paypaad terminal code must be a 10-digit numeric value.'));
   }
   // Check delivery days for a positive number.
-  if (!ctype_digit($form_state['values']["{$id}_delivery_days"])) {
-    form_set_error("{$id}_delivery_days", t('Maximum delivery days must be a positive number.'));
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_delivery_days"])) {
+    form_set_error("{$id}_paypaad_delivery_days", t('Maximum delivery days must be a positive number.'));
   }
   // Check private key file path.
-  if (!is_readable($form_state['values']["{$id}_key_private"])) {
-    form_set_error("{$id}_key_private", t('Private key file is not a valid readable file.'));
+  if (!is_readable($form_state['values']["{$id}_paypaad_key_private"])) {
+    form_set_error("{$id}_paypaad_key_private", t('Private key file is not a valid readable file.'));
   }
   // Check public key file path, if set.
-  if (!empty($form_state['values']["{$id}_key_public"]) && !is_readable($form_state['values']["{$id}_key_public"])) {
-    form_set_error("{$id}_key_public", t('Public key file is not a valid readable file.'));
+  if (!empty($form_state['values']["{$id}_paypaad_key_public"]) && !is_readable($form_state['values']["{$id}_paypaad_key_public"])) {
+    form_set_error("{$id}_paypaad_key_public", t('Public key file is not a valid readable file.'));
   }
   // Check gateway trace URL.
-  if (!valid_url($form_state['values']["{$id}_trace_uri"], TRUE)) {
-    form_set_error("{$id}_trace_uri", t('Paypaad gateway trace URI must be a valid URL.'));
+  if (!valid_url($form_state['values']["{$id}_paypaad_trace_uri"], TRUE)) {
+    form_set_error("{$id}_paypaad_trace_uri", t('Paypaad gateway trace URI must be a valid URL.'));
   }
   // Check gateway controller URL.
-  if (!valid_url($form_state['values']["{$id}_controller_uri"], TRUE)) {
-    form_set_error("{$id}_controller_uri", t('Paypaad gateway controller URI must be a valid URL.'));
+  if (!valid_url($form_state['values']["{$id}_paypaad_controller_uri"], TRUE)) {
+    form_set_error("{$id}_paypaad_controller_uri", t('Paypaad gateway controller URI must be a valid URL.'));
   }
 }
 
