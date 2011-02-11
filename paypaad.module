@@ -314,11 +314,11 @@ function paypaad_settings_fields(&$form, $id) {
  */
 function paypaad_settings_fields_validate($form, &$form_state, $id) {
   // Check merchant code for a 9-digit number.
-  if (!ctype_digit($form_state['values']["{$id}_paypaad_merchant"]) || !isset($form_state['values']["{$id}_paypaad_merchant"][8])) {
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_merchant"]) || strlen($form_state['values']["{$id}_paypaad_merchant"]) != 9) {
     form_set_error("{$id}_paypaad_merchant", t('Paypaad merchant code must be a 9-digit numeric value.'));
   }
   // Check terminal code for a 10-digit number.
-  if (!ctype_digit($form_state['values']["{$id}_paypaad_terminal"]) || !isset($form_state['values']["{$id}_paypaad_terminal"][9])) {
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_terminal"]) || strlen($form_state['values']["{$id}_paypaad_terminal"]) != 10) {
     form_set_error("{$id}_paypaad_terminal", t('Paypaad terminal code must be a 10-digit numeric value.'));
   }
   // Check delivery days for a positive number.
