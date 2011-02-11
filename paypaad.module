@@ -193,6 +193,26 @@ function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
 }
 
 /**
+ * API function to get Paypaad Payment gateway settings.
+ *
+ * This will provide fellow modules to have their settings
+ * values separately via API.
+ *
+ * @param $name
+ *   Settings name.
+ * @param $id
+ *   Module identifier calling the API.
+ * @param $default
+ *   Default value as per required by variable_get().
+ *
+ * @return
+ *   Settings value or FALSE on fail.
+ */
+function paypaad_settings($name, $id, $default = FALSE) {
+  return variable_get("{$id}_paypaad_{$name}", $default);
+}
+
+/**
  * UI helper function that injects required settings fields into the passed form.
  *
  * @param $form
@@ -203,13 +223,15 @@ function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
  * @return
  *   Field injected $form array!
  */
-function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
+function paypaad_settings_fields(&$form, $id) {
+  // Prepend callee identifier.
+  $id = $id . '_paypaad';
   // Paypaad 9-digit merchant code.
   $form["{$id}_merchant"] = array(
     '#type' => 'textfield',
     '#title' => t('Merchant code'),
     '#description' => t('Enter the 9-digit merchant code provided by Pasargad Bank.'),
-    '#default_value' => variable_get("{$id}_merchant", ''),
+    '#default_value' => paypaad_settings('merchant', $id, ''),
     '#required' => TRUE,
   );
   // Paypaad 10-digit terminal code.
@@ -217,15 +239,15 @@ function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
     '#type' => 'textfield',
     '#title' => t('Terminal code'),
     '#description' => t('Enter the 10-digit terminal code provided by Pasargad Bank.'),
-    '#default_value' => variable_get("{$id}_terminal", ''),
+    '#default_value' => paypaad_settings('terminal', $id, ''),
     '#required' => TRUE,
   );
   // Maximum product delivery days.
-  $form["{$id}_max_delivery_days"] = array(
+  $form["{$id}_delivery_days"] = array(
     '#type' => 'textfield',
     '#title' => t('Maximum number of delivery days'),
     '#description' => t('Maximum number of days in which the product will be delivered to customer.'),
-    '#default_value' => variable_get("{$id}_max_delivery_days", ''),
+    '#default_value' => paypaad_settings('delivery_days', $id, ''),
     '#required' => TRUE,
   );
   // Key pair options.
@@ -240,22 +262,22 @@ function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
     '#type' => 'textfield',
     '#title' => t('Private key file'),
     '#description' => t('Accessible absolute system path to your private key PEM file.'),
-    '#default_value' => variable_get("{$id}_key_private", ''),
+    '#default_value' => paypaad_settings('key_private', $id, ''),
     '#required' => TRUE,
   );
-  // Private PEM key path.
+  // Passphrase in case that the private key is encrypted.
   $form['keys']["{$id}_key_passphrase"] = array(
     '#type' => 'textfield',
     '#title' => t('Private key passphrase'),
     '#description' => t('Private key passphrase in case that your key file is encrypted.'),
-    '#default_value' => variable_get("{$id}_key_passphrase", ''),
+    '#default_value' => paypaad_settings('key_passphrase', $id, ''),
   );
-  // Private PEM key path.
+  // Public PEM key path.
   $form['keys']["{$id}_key_public"] = array(
     '#type' => 'textfield',
     '#title' => t('Public key file'),
     '#description' => t('Optional accessible absolute system path to your public key PEM file for verification purposes.'),
-    '#default_value' => variable_get("{$id}_key_public", ''),
+    '#default_value' => paypaad_settings('key_public', $id, ''),
   );
   // Paypaad gateway URIs.
   $form['additional'] = array(
@@ -269,7 +291,7 @@ function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
     '#type' => 'textfield',
     '#title' => t('Paypaad gateway controller URI'),
     '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
-    '#default_value' => variable_get("{$id}_trace_uri", PAYPAAD_TRACE_URI),
+    '#default_value' => paypaad_settings('trace_uri', $id, PAYPAAD_TRACE_URI),
     '#required' => TRUE,
   );
   // Paypaad gateway controller URI.
@@ -277,7 +299,7 @@ function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
     '#type' => 'textfield',
     '#title' => t('Paypaad gateway controller URI'),
     '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
-    '#default_value' => variable_get("{$id}_controller_uri", PAYPAAD_CONTROLLER_URI),
+    '#default_value' => paypaad_settings('controller_uri', $id, PAYPAAD_CONTROLLER_URI),
     '#required' => TRUE,
   );
 
@@ -292,7 +314,9 @@ function paypaad_settings_fields(&$form = array(), $id = 'paypaad') {
  * @param $form_state
  *   Form state array as provided to a form validation callback.
  */
-function paypaad_settings_fields_validate($form, &$form_state, $id = 'paypaad') {
+function paypaad_settings_fields_validate($form, &$form_state, $id) {
+  // Prepend callee identifier.
+  $id = $id . '_paypaad';
   // Check merchant code for a 9-digit number.
   if (!ctype_digit($form_state['values']["{$id}_merchant"]) || !isset($form_state['values']["{$id}_merchant"][8])) {
     form_set_error("{$id}_merchant", t('Paypaad merchant code must be a 9-digit numeric value.'));
@@ -302,8 +326,8 @@ function paypaad_settings_fields_validate($form, &$form_state, $id = 'paypaad') 
     form_set_error("{$id}_terminal", t('Paypaad terminal code must be a 10-digit numeric value.'));
   }
   // Check delivery days for a positive number.
-  if (!ctype_digit($form_state['values']["{$id}_max_delivery_days"])) {
-    form_set_error("{$id}_max_delivery_days", t('Maximum delivery days must be a positive number.'));
+  if (!ctype_digit($form_state['values']["{$id}_delivery_days"])) {
+    form_set_error("{$id}_delivery_days", t('Maximum delivery days must be a positive number.'));
   }
   // Check private key file path.
   if (!is_readable($form_state['values']["{$id}_key_private"])) {
