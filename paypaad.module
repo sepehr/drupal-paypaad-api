@@ -6,7 +6,8 @@
  * Contains Pasargad Bank Paypaad Payment API implementations and helpers.
  *
  * @todo
- * Hook designation.
+ * - Hook designation.
+ * - Error watchdog log.
  */
 
 /**
@@ -66,35 +67,23 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
 }
 
 /**
- * API function to return a request response.
- *
- * @param $status
- *   Indicates what situation we're in.
- *   - failure: Indicates transaction failure.
- *   - successed: The transaction was successfull, so gateway
- *     has sent following elements via HTTP POST. See docs, v2, p6.
- *     - iD: Invoice date.
- *     - iN: Invoice number.
- *     - tref: Transaction reference as shown to our customer.
+ * API function to return a successfull request response.
  *
  * @return
  *   An array of request response.
  *
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
-function paypaad_response($status) {
-  switch ($status) {
-    case 'failure':
-      return FALSE;
-
-    case 'success':
-      // TODO: Sanitize.
-      return array(
-        'invoice_date' => $_POST['iD'],
-        'invoice_number' => $_POST['iN'],
-        'transaction_reference' => $_POST['tref'],
-      );
+function paypaad_response() {
+  if (isset($_POST['iD'], $_POST['iN'], $_POST['tref'])) {
+    return array(
+      'invoice_date' => $_POST['iD'],
+      'invoice_number' => $_POST['iN'],
+      'transaction_reference' => $_POST['tref'],
+    );
   }
+  // Unexpected failure.
+  return FALSE;
 }
 
 /**
