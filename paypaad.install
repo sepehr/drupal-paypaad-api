@@ -32,6 +32,7 @@ function paypaad_uninstall() {
 function paypaad_schema() {
   $schema = array();
 
+  // TODO: update schema.
   $schema['paypaad'] = array(
     'description' => 'Stores Pasargad Paypaad Payment transactions.',
     'fields' => array(
