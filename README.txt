@@ -4,15 +4,17 @@ Description
 ===========
 Drupal implementation of Pasargad Bank Paypaad Payment API, feeding pay-paypaad and uc-paypaad modules.
 
-NOTICE
-======
-THAT'S IN EARLY DEVELOPMENT STAGE AND IS ABSOLUTELY NOT READY FOR PRODUCTION.
-
 Requirements
 ============
 - PHP >= 5.0
 - PHP cURL Extension
 - PHP OpenSSL Extension
+
+API Usage
+=========
+Read on:
+- http://github.com/sepehr/uc-paypaad
+- http://github.com/sepehr/pay-paypaad
 
 Author and Maintainer
 =====================
