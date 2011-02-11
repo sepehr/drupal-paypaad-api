@@ -199,14 +199,23 @@ function paypaad_sign($xml, $private, $passphrase = '', $public = FALSE) {
  * values separately via API.
  *
  * @param $name
- *   Settings name.
+ *   One of following settings names as registered by
+ *   module identified by $id.
+ *   - merchant
+ *   - terminal
+ *   - delivery_days
+ *   - key_private
+ *   - key_passphrase
+ *   - key_public
+ *   - trace_uri
+ *   - controller_uri
  * @param $id
- *   Module identifier calling the API.
+ *   Callee module identifier calling the API.
  * @param $default
  *   Default value as per required by variable_get().
  *
  * @return
- *   Settings value or FALSE on fail.
+ *   Either the $name settings value or $default value.
  */
 function paypaad_settings($name, $id, $default = '') {
   return variable_get("{$id}_paypaad_{$name}", $default);
@@ -218,7 +227,7 @@ function paypaad_settings($name, $id, $default = '') {
  * @param $form
  *   Form (sub)array.
  * @param $id
- *   Module identifier used as field name prefix.
+ *   Callee module identifier used as field name prefix.
  *
  * @return
  *   Field injected $form array!
@@ -311,6 +320,11 @@ function paypaad_settings_fields(&$form, $id) {
  *   Form array as provided to a form validation callback.
  * @param $form_state
  *   Form state array as provided to a form validation callback.
+ * @param $id
+ *   Module identifier used as field name prefix.
+ *
+ * @see paypaad_settings()
+ * @see paypaad_settings_fields()
  */
 function paypaad_settings_fields_validate($form, &$form_state, $id) {
   // Check merchant code for a 9-digit number.
