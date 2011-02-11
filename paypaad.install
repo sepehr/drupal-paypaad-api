@@ -10,7 +10,7 @@
  * Implements hook_install().
  */
 function paypaad_install() {
-
+  drupal_install_schema('paypaad');
 }
 
 
@@ -18,6 +18,67 @@ function paypaad_install() {
  * Implements hook_uninstall().
  */
 function paypaad_uninstall() {
+  drupal_uninstall_schema('paypaad');
+  // Remove variables, directly deleting these all is not encouraged.
+  $variables = db_query("SELECT name FROM {variables} WHERE name LIKE '%%_paypaad_%%'");
+  foreach ($variables as $variable) {
+    variable_del($variable->name);
+  }
+}
 
+/**
+ * Implements hook_schema().
+ */
+function paypaad_schema() {
+  $schema = array();
+
+  $schema['paypaad'] = array(
+    'description' => 'Stores Pasargad Paypaad Payment transactions.',
+    'fields' => array(
+      'pid' => array(
+        'description' => 'The primary identifier for a Paypaad transaction.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE
+      ),
+      'invoice_id' => array(
+        'description' => 'Invoice identifier.',
+        'type' => 'int',
+        'length' => 10,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'transaction_reference' => array(
+        'description' => 'Transaction reference number.',
+        'type' => 'int',
+        'length' => 10,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'trace_number' => array(
+        'description' => 'Trace number.',
+        'type' => 'int',
+        'length' => 10,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'invoice_number' => array(
+        'description' => 'Invoice number.',
+        'type' => 'int',
+        'length' => 10,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'invoice_date' => array(
+        'description' => 'Invoice date.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('pid'),
+  );
+
+  return $schema;
 }
 
