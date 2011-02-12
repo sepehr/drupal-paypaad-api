@@ -171,6 +171,22 @@ function _paypaad_xml_validate($xml, $root = 'invoice', $dtd_path = FALSE) {
 }
 
 /**
+ * Internal helper to parse a well-formed XML string into an array.
+ *
+ * @param $xml
+ *   XML string to be parsed.
+ *
+ * @return
+ *   Passed XML string corresponding array.
+ *
+ * @see paypaad_trace()
+ * @see http://php.net/manual/en/book.json.php
+ */
+function _paypaad_xml_parse($xml) {
+  return json_decode(json_encode(simplexml_load_string($xml)), TRUE);
+}
+
+/**
  * Internal helper to perform a cURL POST request.
  *
  * @param $destination
