@@ -44,7 +44,15 @@ define('PAYPAAD_CONTROLLER_URI', 'https://paypaad.bankpasargad.com/PaymentContro
  *
  * @return
  *   Request response consists of following parameters
- *   or FALSE in case of operation failure.
+ *   in form of a multi-dimensional array or raw XML string,
+ *   if requested so. In case of operation failure it returns
+ *   FALSE. See docs, v2, p6.
+ *   - result: String "true" or "false", indicating operation status.
+ *   - trasaction_reference_id
+ *   - invoice_number
+ *   - invoice_date
+ *   - merchant_code
+ *   - terminal_code
  *   - trace_number
  *   - reference_number
  *   - transaction_date
@@ -53,9 +61,10 @@ define('PAYPAAD_CONTROLLER_URI', 'https://paypaad.bankpasargad.com/PaymentContro
  */
 function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TRACE_URI, $parse = TRUE) {
   // Partially check requirements.
-  if (!$reference && count($alternative) < 4) {
+  if (!$reference && empty($alternative)) {
     return FALSE;
   }
+
   // Load internal helpers.
   module_load_include('inc', 'paypaad');
   // Setting POST parameters.
@@ -63,7 +72,7 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
   // Dispatch HTTP POST request.
   $response = _pasargard_curl($gateway, $params);
   // Return response as requested.
-  return $parse ? simplexml_load_string($response) : $response;
+  return $parse ? _paypaad_xml_parse($response) : $response;
 }
 
 /**
@@ -75,11 +84,11 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
  * @see http://developers.paypaad.ir/docs/readme.pdf
  */
 function paypaad_response() {
-  if (isset($_POST['iD'], $_POST['iN'], $_POST['tref'])) {
+  if (isset($_GET['iD'], $_GET['iN'], $_GET['tref'])) {
     return array(
-      'invoice_date' => $_POST['iD'],
-      'invoice_number' => $_POST['iN'],
-      'transaction_reference' => $_POST['tref'],
+      'invoice_date' => $_GET['iD'],
+      'invoice_number' => $_GET['iN'],
+      'transaction_reference' => $_GET['tref'],
     );
   }
   // Unexpected failure.
