@@ -202,15 +202,14 @@ function _paypaad_xml_parse($xml) {
  * @see paypaad_request()
  * @see http://php.net/manual/en/function.curl-setopt.php
  */
-function _pasargard_curl($destination, $params = '') {
-  // cURL is a dependency.
+function _paypaad_curl($destination, $params = '') {
+  // Check cURL dependency.
   if (!extension_loaded('curl')) {
     return FALSE;
   }
 
   // Initiate cURL session, set options.
-  $curl = curl_init();
-  curl_setopt($curl, CURLOPT_URL, $destination);
+  $curl = curl_init($destination);
   curl_setopt($curl, CURLOPT_HEADER, FALSE);
   curl_setopt($curl, CURLOPT_FAILONERROR, TRUE);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -219,7 +218,10 @@ function _pasargard_curl($destination, $params = '') {
   curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
   // Set POST request options.
   curl_setopt($curl, CURLOPT_POST, TRUE);
-  curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+  // I wonder why it's not working with associative arrays, might
+  // be a HTTP header "Expect:" issue. Read CURLOPT_POSTFIELDS option
+  // description at: http://php.net/manual/en/function.curl-setopt.php
+  curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($params));
   // Run rabbit, run!
   $response = curl_exec($curl);
 
