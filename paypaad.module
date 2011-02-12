@@ -70,7 +70,7 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
   // Setting POST parameters.
   $params = $reference ? array('tref' => $reference) : $alternative;
   // Dispatch HTTP POST request.
-  $response = _pasargard_curl($gateway, $params);
+  $response = _paypaad_curl($gateway, $params);
   // Return response as requested.
   return $parse ? _paypaad_xml_parse($response) : $response;
 }
