@@ -153,21 +153,21 @@ function _paypaad_xml_validate($xml, $root = 'invoice', $dtd_path = FALSE) {
   // on passed XML string, if the $xml string
   // has its own DTD included, overwrite that
   // with the one specified in $dtd_path file.
-  $DOMDoc = new DOMDocument();
-  $DOMDoc->loadXML($xml);
+  $dom = new DOMDocument();
+  $dom->loadXML($xml);
   // Instantiate a new DOMDocument with $dtd_path DTD.
-  $DOMCreator = new DOMImplementation();
-  $DOMDocType = $DOMCreator->createDocumentType($root, NULL, $dtd_path);
-  $NewDOMDoc  = $DOMCreator->createDocument(NULL, NULL, $DOMDocType);
-  $NewDOMDoc->encoding = 'UTF-8';
+  $dom_creator = new DOMImplementation();
+  $dom_doctype = $dom_creator->createDocumentType($root, NULL, $dtd_path);
+  $new_dom  = $dom_creator->createDocument(NULL, NULL, $dom_doctype);
+  $new_dom->encoding = 'UTF-8';
   // Loading $xml directly into the new object will
-  // cause $NewDOMDoc's DTD ($dtd_path) to be overwritten
+  // cause $new_dom's DTD ($dtd_path) to be overwritten
   // by the original DTD specified in passed XML string.
-  $DOMDocNode = $DOMDoc->getElementsByTagName($root)->item(0);
-  $NewDOMDocNode = $NewDOMDoc->importNode($DOMDocNode, TRUE);
-  $NewDOMDoc->appendChild($NewDOMDocNode);
+  $dom_node = $dom->getElementsByTagName($root)->item(0);
+  $new_dom_node = $new_dom->importNode($dom_node, TRUE);
+  $new_dom->appendChild($new_dom_node);
   // Validate and return results.
-  return $NewDOMDoc->validate();
+  return $new_dom->validate();
 }
 
 /**
