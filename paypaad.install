@@ -32,7 +32,6 @@ function paypaad_uninstall() {
 function paypaad_schema() {
   $schema = array();
 
-  // TODO: update schema.
   $schema['paypaad'] = array(
     'description' => 'Stores Pasargad Paypaad Payment transactions.',
     'fields' => array(
@@ -42,38 +41,61 @@ function paypaad_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE
       ),
-      'invoice_id' => array(
-        'description' => 'Invoice identifier.',
+      'uid' => array(
+        'description' => 'Customer user identifier.',
         'type' => 'int',
-        'length' => 10,
-        'unsigned' => TRUE,
+        'length' => 11,
         'not null' => TRUE,
       ),
-      'transaction_reference' => array(
-        'description' => 'Transaction reference number.',
-        'type' => 'int',
-        'length' => 10,
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'trace_number' => array(
-        'description' => 'Trace number.',
-        'type' => 'int',
-        'length' => 10,
-        'unsigned' => TRUE,
+      'transaction_reference_id' => array(
+        'description' => 'Transaction reference identifier.',
+        'type' => 'varchar',
+        'length' => 32,
         'not null' => TRUE,
       ),
       'invoice_number' => array(
-        'description' => 'Invoice number.',
-        'type' => 'int',
-        'length' => 10,
-        'unsigned' => TRUE,
+        'type' => 'varchar',
+        'length' => 32,
         'not null' => TRUE,
       ),
       'invoice_date' => array(
-        'description' => 'Invoice date.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'trace_number' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'reference_number' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'transaction_date' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'amount' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'module_id' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ),
+      'entity_id' => array(
         'type' => 'int',
-        'unsigned' => TRUE,
+        'length' => 11,
+        'not null' => TRUE,
+      ),
+      'timestamp' => array(
+        'description' => 'Transaction record timestamp.',
+        'type' => 'int',
         'not null' => TRUE,
       ),
     ),
