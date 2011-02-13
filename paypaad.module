@@ -236,26 +236,96 @@ function paypaad_save($transaction, $entity_id, $module_id) {
 }
 
 /**
- * API function that loads a stored Paypaad transaction.
+ * API function to remove a stored Paypaad transaction.
  *
- * @param $transaction_id
- *   Transaction identifier.
- *
- * @return
- *   Loaded transaction object.
+ * @param $pid
+ *   Paypaad transaction identifier.
  */
-function paypaad_load($transaction_id) {
-  // TODO: Implement.
+function paypaad_delete($pid) {
+  db_query("DELETE FROM {paypaad} WHERE pid = %d", $pid);
+  return db_affected_rows();
 }
 
 /**
- * API function to remove a stored Paypaad transaction.
+ * API function to load a Paypaad transaction.
  *
- * @param $transaction_id
- *   Transaction identifier.
+ * @param $params
+ *   The pid of the Paypaad transaction or an array of conditions to match against.
+ * @param $fields
+ *   An array of database field names to retrieve.
+ * @param $reset
+ *   Whether to flush the internal cache.
+ *
+ * @return
+ *   Loaded Paypaad transaction object or an array of these objects.
+ *   It returns FALSE on fail.
  */
-function paypaad_delete($transaction_id) {
-  // TODO: Implement.
+function paypaad_load($params = array(), $fields = array(), $reset = FALSE) {
+  static $cache = array();
+
+  // Flush the internal cache, if set so.
+  if ($reset) {
+    $cache = array();
+  }
+  // Check for cache availablity.
+  $arguments = array();
+  // Primary identifier set.
+  if (is_numeric($params)) {
+    if (isset($cache[$params])) {
+      return (object) $cache[$params];
+    }
+    $conditions = 'pid = %d';
+    $arguments  = $params;
+  }
+  // Parameters passed as an array.
+  elseif (is_array($params)) {
+    // Parse the $params array into a query.
+    foreach ($params as $key => $value) {
+      // Parse timestamp.
+      if ($key == 'period' && isset($value['from'])) {
+        $conditions[] = '(timestamp BETWEEN %d AND %d)';
+        $arguments[] = $value['from'];
+        $arguments[] = isset($value['to']) ? $value['to'] : time();
+      }
+      // Other than timestamp.
+      else {
+        $conditions[] = db_escape_table($key) . " = '%s'";
+        $arguments[] = $value;
+      }
+    }
+    $conditions = implode(' AND ', $conditions);
+  }
+  // Not enough arameters.
+  else {
+    return FALSE;
+  }
+
+  // Prepare fields to be retrieved.
+  $fields = (empty($fields) || !is_array($fields)) ? '*' : implode(',', $fields);
+
+  // Retrieve results.
+  $transactions = array();
+  $conditions = $conditions ? $conditions : 'TRUE';
+  // Just ignore that coder critical thing ;)
+  $results = db_query("SELECT $fields FROM {paypaad} WHERE $conditions", $arguments);
+  // Iterate through results and build an array of objects.
+  while ($transaction = db_fetch_object($results)) {
+    $transactions[] = $transaction;
+    // Set an internal cache entry per each transaction.
+    $cache[$transaction->pid] = $transaction;
+  }
+
+  // If there is one, remove the wrapper.
+  $count = count($transactions);
+  if ($count == 1) {
+    $transactions = $transactions[0];
+  }
+  // If there is no results at all.
+  elseif (!$count) {
+    return FALSE;
+  }
+
+  return $transactions;
 }
 
 /**
