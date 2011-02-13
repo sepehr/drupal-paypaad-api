@@ -268,8 +268,6 @@ function paypaad_load($params = array(), $fields = array(), $reset = FALSE) {
     $cache = array();
   }
   // Check for cache availablity.
-  $arguments = array();
-  // Primary identifier set.
   if (is_numeric($params)) {
     if (isset($cache[$params])) {
       return (object) $cache[$params];
@@ -280,9 +278,15 @@ function paypaad_load($params = array(), $fields = array(), $reset = FALSE) {
   // Parameters passed as an array.
   elseif (is_array($params)) {
     // Parse the $params array into a query.
+    $conditions = $arguments = array();
     foreach ($params as $key => $value) {
       // Parse timestamp.
-      if ($key == 'period' && isset($value['from'])) {
+      if ($key == 'period') {
+        // "from" element is not set, #fail.
+        if (!isset($value['from'])) {
+          return FALSE;
+        }
+        // Enough period parameters provided.
         $conditions[] = '(timestamp BETWEEN %d AND %d)';
         $arguments[] = $value['from'];
         $arguments[] = isset($value['to']) ? $value['to'] : time();
@@ -293,7 +297,7 @@ function paypaad_load($params = array(), $fields = array(), $reset = FALSE) {
         $arguments[] = $value;
       }
     }
-    $conditions = implode(' AND ', $conditions);
+    $conditions = empty($conditions) ? 'TRUE' : implode(' AND ', $conditions);
   }
   // Not enough arameters.
   else {
@@ -305,7 +309,6 @@ function paypaad_load($params = array(), $fields = array(), $reset = FALSE) {
 
   // Retrieve results.
   $transactions = array();
-  $conditions = $conditions ? $conditions : 'TRUE';
   // Just ignore that coder critical thing ;)
   $results = db_query("SELECT $fields FROM {paypaad} WHERE $conditions", $arguments);
   // Iterate through results and build an array of objects.
