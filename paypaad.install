@@ -20,7 +20,7 @@ function paypaad_install() {
 function paypaad_uninstall() {
   drupal_uninstall_schema('paypaad');
   // Remove variables, directly deleting these all is not encouraged.
-  $variables = db_query("SELECT name FROM {variables} WHERE name LIKE '%%_paypaad_%%'");
+  $variables = db_query("SELECT name FROM {variable} WHERE name LIKE '%%_paypaad_%%'");
   foreach ($variables as $variable) {
     variable_del($variable->name);
   }
