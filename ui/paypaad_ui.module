@@ -21,9 +21,12 @@ function paypaad_ui_menu() {
 }
 
 /**
- * Implements hook_views().
+ * Implements hook_views_api().
  */
-function paypaad_ui_views() {
-
+function paypaad_ui_views_api() {
+  return array(
+    'api' => 2.0,
+    'path' => drupal_get_path('module', 'paypaad_ui') . '/views',
+  );
 }
 
