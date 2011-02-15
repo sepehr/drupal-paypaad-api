@@ -1,0 +1,29 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Contains necessary hook implementations, callbacks & helpers.
+ */
+
+/**
+ * Implements hook_perm().
+ */
+function paypaad_ui_perm() {
+
+}
+
+/**
+ * Implements hook_menu().
+ */
+function paypaad_ui_menu() {
+
+}
+
+/**
+ * Implements hook_views().
+ */
+function paypaad_ui_views() {
+
+}
+

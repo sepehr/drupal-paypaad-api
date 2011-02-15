@@ -1,0 +1,8 @@
+; $Id$
+name = "Paypaad Trasactions UI"
+description = "Provides a centeral UI for managing transaction informations processed through Paypaad payment modules."
+core = 6.x
+package = Paypaad
+dependencies[] = views
+dependencies[] = paypaad
+

@@ -1,0 +1,15 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Contains un/installation hook implementations.
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function paypaad_ui_enable() {
+
+}
+
