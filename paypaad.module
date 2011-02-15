@@ -231,8 +231,18 @@ function paypaad_save($transaction, $entity_id, $module_id) {
   if (!isset($transaction->timestamp)) {
     $transaction->timestamp = time();
   }
+  // Convert invoice date to timestamp.
+  // Invoice date is returned from the Paypaad
+  // gateway in "D, Y/m/d - H:i" format. strptime() is
+  // ideal here but is not available in suckin' windows
+  // machines. Another option could be PHP 5.3's the
+  // date_parse_from_format() but it's 5.3, you know!
+  // so we need to remove the separator dash and use
+  // strtotime() instead.
+  $transaction->invoice_date = strtotime(str_replace(' -', '', $transaction->invoice_date));
 
   return drupal_write_record('paypaad', $transaction);
+  // Damn! if I could use that strptime() for World Calendars!!
 }
 
 /**

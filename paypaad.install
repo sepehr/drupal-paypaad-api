@@ -59,8 +59,7 @@ function paypaad_schema() {
         'not null' => TRUE,
       ),
       'invoice_date' => array(
-        'type' => 'varchar',
-        'length' => 32,
+        'type' => 'int',
         'not null' => TRUE,
       ),
       'trace_number' => array(
