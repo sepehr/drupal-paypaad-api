@@ -65,6 +65,12 @@ function paypaad_ui_views_data() {
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'users',
+      'base field' => 'uid',
+      'label' => t('user'),
+    ),
   );
 
   $data['paypaad']['transaction_reference_id'] = array(
