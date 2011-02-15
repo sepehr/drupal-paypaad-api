@@ -10,7 +10,7 @@
  * Implements hook_perm().
  */
 function paypaad_ui_perm() {
-
+  return array('administer paypaad transactions');
 }
 
 /**
