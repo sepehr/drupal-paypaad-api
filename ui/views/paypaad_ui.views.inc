@@ -214,21 +214,21 @@ function paypaad_ui_views_data() {
     ),
   );
 
-  $data['paypaad']['entity_id'] = array(
-    'title' => t('Entity identifier'),
-    'help'  => t('Drupal entity ID, might be a node, UC order, etc.'),
+  $data['paypaad']['entity_path'] = array(
+    'title' => t('Entity path'),
+    'help'  => t('Drupal path of the entity for which the payment has been processed. e.g. An UC order path.'),
     'field' => array(
-      'handler' => 'views_handler_field_numeric',
+      'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-    ),
+     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
+      'handler' => 'views_handler_filter_string',
     ),
     'argument' => array(
-      'handler' => 'views_handler_argument_numeric',
+      'handler' => 'views_handler_argument_string',
     ),
   );
 

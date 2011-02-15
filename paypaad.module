@@ -224,8 +224,8 @@ function paypaad_save($transaction, $entity_id, $module_id) {
 
   // Prepare the transaction object.
   $transaction->uid = $user->uid;
-  $transaction->entity_id = $entity_id;
   $transaction->module_id = $module_id;
+  $transaction->entity_path = $entity_path;
   unset($transaction->result, $transaction->merchant_code, $transaction->terminal_code);
   // Set record timestamp, if not set.
   if (!isset($transaction->timestamp)) {
@@ -241,7 +241,7 @@ function paypaad_save($transaction, $entity_id, $module_id) {
   $transaction->invoice_date = strtotime(str_replace(' -', '', $transaction->invoice_date));
 
   return drupal_write_record('paypaad', $transaction);
-  // Damn! if I could use that strptime() for World Calendars!!
+  // Damn! if I could use that strptime() for World Calendars!!_
 }
 
 /**

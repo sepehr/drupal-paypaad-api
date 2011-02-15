@@ -87,10 +87,11 @@ function paypaad_schema() {
         'length' => 32,
         'not null' => TRUE,
       ),
-      'entity_id' => array(
-        'type' => 'int',
-        'length' => 11,
-        'not null' => TRUE,
+      'entity_path' => array(
+        'description' => 'Path of the drupal entity for which the payment has been processed.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
       ),
       'timestamp' => array(
         'description' => 'Transaction record timestamp.',
