@@ -30,8 +30,8 @@ function paypaad_ui_views_data() {
   );
 
   $data['paypaad']['pid'] = array(
-    'title' => t('Transaction identifier'),
-    'help'  => t('The Paypaad transaction ID.'),
+    'title' => t('Paypaad transaction identifier'),
+    'help'  => t('The Paypaad transaction ID also known as pid.'),
     'field' => array(
       'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
