@@ -6,4 +6,5 @@ package = Paypaad
 dependencies[] = paypaad
 dependencies[] = views
 dependencies[] = views_calc
+dependencies[] = views_fieldset_exposure
 
