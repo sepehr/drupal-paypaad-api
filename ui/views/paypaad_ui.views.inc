@@ -79,7 +79,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -97,7 +97,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -130,7 +130,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -148,7 +148,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -166,7 +166,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -184,7 +184,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -202,7 +202,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -220,7 +220,7 @@ function paypaad_ui_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_xss',
       'click sortable' => TRUE,
-     ),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
