@@ -10,6 +10,8 @@
  * Implements hook_enable().
  */
 function paypaad_ui_enable() {
-
+  drupal_set_message(t('Paypaad transactions UI has been enabled successfully, <a href="!link">take a look.</a>',
+    array('!link' => url(_paypaad_ui_menu('path')))
+  ));
 }
 
