@@ -3,4 +3,4 @@ name = "Pasargad Bank Paypaad Payment API"
 description = "Standalone implementation of Pasargad Bank Paypaad Payment API, feeding others."
 php = 5.0
 core = 6.x
-
+package = Paypaad
