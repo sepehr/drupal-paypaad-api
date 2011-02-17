@@ -1139,8 +1139,13 @@ function paypaad_ui_views_default_views() {
     'name' => 'navigation',
   ));
   $handler = $view->new_display('page', 'Admin Page', 'page_2');
-  // Dynamically decide where to put this display.
+
+  // Dynamically set display path.
+  if (!function_exists('_paypaad_ui_menu')) {
+    drupal_load('module', 'paypaad_ui');
+  }
   $handler->override_option('path', _paypaad_ui_menu('path'));
+
   $handler->override_option('menu', array(
     'type' => 'normal',
     'title' => 'Paypaad Payments',
