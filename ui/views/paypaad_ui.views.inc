@@ -247,6 +247,32 @@ function paypaad_ui_views_data() {
     ),
   );
 
+  $data['paypaad']['delete_paypaad'] = array(
+    'field' => array(
+      'title' => t('Transaction delete link'),
+      'help'  => t('Provides a link to delete the transaction record.'),
+      'handler' => 'paypaad_ui_handler_field_paypaad_link_delete',
+    ),
+  );
+
   return $data;
+}
+
+/**
+ * Implements hook_views_handlers().
+ */
+function paypaad_ui_views_handlers() {
+  $handlers = array();
+  $handlers['info'] = array(
+    'path' => drupal_get_path('module', 'paypaad_ui') . '/views/handlers',
+  );
+
+  $handlers['handlers'] = array(
+    'paypaad_ui_handler_field_paypaad_link_delete' => array(
+      'parent' => 'views_handler_field',
+    ),
+  );
+
+  return $handlers;
 }
 
