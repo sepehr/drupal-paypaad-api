@@ -17,7 +17,18 @@ function paypaad_ui_perm() {
  * Implements hook_menu().
  */
 function paypaad_ui_menu() {
+  $items = $menu = array();
+  $menu['path']  = _paypaad_ui_menu('path') . '/transaction/%paypaad/delete';
 
+  $items[$menu['path']] = array(
+    'title' => 'Delete Paypaad transaction',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('paypaad_ui_delete_form', count(explode('/', $menu['path'])) - 2),
+    'access arguments' => array('administer paypaad transactions'),
+    'file' => 'paypaad_ui.inc',
+  );
+
+  return $items;
 }
 
 /**
@@ -28,5 +39,64 @@ function paypaad_ui_views_api() {
     'api' => 2.0,
     'path' => drupal_get_path('module', 'paypaad_ui') . '/views',
   );
+}
+
+/**
+ * Helper static cache function that finds out the most suitable menu path & type.
+ *
+ * Checks for Drupal commerce solutions existance on the
+ * current installation and returns best-fit menu path & type.
+ *
+ * @param $type
+ *   Indicates the type of return value.
+ *   - both
+ *   - path
+ *   - type
+ *
+ * @return
+ *   An array of Paypaad UI menu path and type.
+ *
+ * @see paypaad_ui_views_default_views()
+ *
+ * @todo Let ecommerce module in.
+ */
+function _paypaad_ui_menu($type = 'both') {
+  static $menu;
+
+  if (!isset($menu)) {
+    // Check UC payment.
+    if (module_exists('uc_payment')) {
+      $menu = array(
+        'path' => 'admin/store/reports/paypaad',
+        'type' => MENU_NORMAL_ITEM,
+      );
+    }
+    // Check Payment API.
+    elseif (module_exists('pay')) {
+      $menu = array(
+        'path' => 'admin/settings/pay/paypaad',
+        'type' => MENU_LOCAL_TASK,
+      );
+    }
+    // Default.
+    else {
+      $menu = array(
+        'path' => 'admin/reports/paypaad',
+        'type' => MENU_NORMAL_ITEM,
+      );
+    }
+  }
+
+  return ($type == 'both') ? $menu : $menu[$type];
+}
+
+/**
+ * Helper function to generate a human readable title for a transaction record.
+ */
+function _paypaad_ui_title($transaction) {
+  if (is_numeric($transaction)) {
+    $transaction = paypaad_load($transaction);
+  }
+  return t('Paypaad transaction #') . $transaction->transaction_reference_id;
 }
 
