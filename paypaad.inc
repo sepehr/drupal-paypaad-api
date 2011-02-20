@@ -40,10 +40,7 @@ function _paypaad_xml_build(&$content, &$items, $validate = FALSE) {
   $xml .= _paypaad_xml_template_load($content, 'invoice');
 
   // Validate generated XML against its DTD, if requested so.
-  if ($validate) {
-    return _paypaad_xml_validate($xml) ? $xml : FALSE;
-  }
-  return $xml;
+  return $validate ? (_paypaad_xml_validate($xml) ? $xml : FALSE) : $xml;
 }
 
 /**
