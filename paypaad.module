@@ -86,9 +86,9 @@ function paypaad_trace($reference, $alternative = array(), $gateway = PAYPAAD_TR
 function paypaad_response() {
   if (isset($_GET['iD'], $_GET['iN'], $_GET['tref'])) {
     return array(
-      'invoice_date' => $_GET['iD'],
-      'invoice_number' => $_GET['iN'],
-      'transaction_reference' => $_GET['tref'],
+      'invoice_date' => check_plain($_GET['iD']),
+      'invoice_number' => check_plain($_GET['iN']),
+      'transaction_reference' => check_plain($_GET['tref']),
     );
   }
   // Unexpected failure.
@@ -444,7 +444,7 @@ function paypaad_settings_fields(&$form, $id) {
   // Paypaad gateway trace URI.
   $form['additional']["{$id}_paypaad_trace_uri"] = array(
     '#type' => 'textfield',
-    '#title' => t('Paypaad gateway controller URI'),
+    '#title' => t('Paypaad gateway trace URI'),
     '#description' => t('Do not change the default value unless you checked that Paypaad docs and it has changed.'),
     '#default_value' => paypaad_settings('trace_uri', $id, PAYPAAD_TRACE_URI),
     '#required' => TRUE,
