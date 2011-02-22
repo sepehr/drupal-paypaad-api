@@ -196,7 +196,6 @@ function _paypaad_xml_parse($xml) {
  *   Either the request response string or FALSE on fail.
  *
  * @see paypaad_trace()
- * @see paypaad_request()
  * @see http://php.net/manual/en/function.curl-setopt.php
  */
 function _paypaad_curl($destination, $params = '') {
