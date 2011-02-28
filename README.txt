@@ -1,5 +1,3 @@
-// $Id$
-
 Description
 ===========
 Drupal implementation of Pasargad Bank Paypaad Payment API, feeding pay-paypaad and uc-paypaad modules.
