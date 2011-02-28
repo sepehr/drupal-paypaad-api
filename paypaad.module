@@ -384,7 +384,7 @@ function paypaad_settings_fields(&$form, $id) {
   $form["{$id}_paypaad_merchant"] = array(
     '#type' => 'textfield',
     '#title' => t('Merchant code'),
-    '#description' => t("Enter Paypaad's 9-digit merchant code."),
+    '#description' => t("Enter the merchant code provided by Paypaad"),
     '#default_value' => paypaad_settings('merchant', $id, ''),
     '#required' => TRUE,
   );
@@ -392,7 +392,7 @@ function paypaad_settings_fields(&$form, $id) {
   $form["{$id}_paypaad_terminal"] = array(
     '#type' => 'textfield',
     '#title' => t('Terminal code'),
-    '#description' => t("Enter Paypaad's 10-digit terminal code."),
+    '#description' => t("Enter the terminal code provided by Paypaad."),
     '#default_value' => paypaad_settings('terminal', $id, ''),
     '#required' => TRUE,
   );
