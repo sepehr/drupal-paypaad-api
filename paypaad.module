@@ -478,9 +478,9 @@ function paypaad_settings_fields_validate($form, &$form_state, $id) {
   if (!ctype_digit($form_state['values']["{$id}_paypaad_merchant"])) {
     form_set_error("{$id}_paypaad_merchant", t('Paypaad merchant code must be a valid numeric value.'));
   }
-  // Check terminal code for a 10-digit number. Same drupal_strlen() story here.
-  if (!ctype_digit($form_state['values']["{$id}_paypaad_terminal"]) || strlen($form_state['values']["{$id}_paypaad_terminal"]) != 10) {
-    form_set_error("{$id}_paypaad_terminal", t('Paypaad terminal code must be a 10-digit numeric value.'));
+  // Check for a numeric terminal code.
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_terminal"])) {
+    form_set_error("{$id}_paypaad_terminal", t('Paypaad terminal code must be a valid numeric value.'));
   }
   // Check delivery days for a positive number.
   if (!ctype_digit($form_state['values']["{$id}_paypaad_delivery_days"])) {
