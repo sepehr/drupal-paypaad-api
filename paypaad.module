@@ -474,9 +474,9 @@ function paypaad_settings_fields(&$form, $id) {
  * @see paypaad_settings_fields()
  */
 function paypaad_settings_fields_validate($form, &$form_state, $id) {
-  // Check merchant code for a 9-digit number. drupal_strlen() usage is not necessary here.
-  if (!ctype_digit($form_state['values']["{$id}_paypaad_merchant"]) || strlen($form_state['values']["{$id}_paypaad_merchant"]) != 9) {
-    form_set_error("{$id}_paypaad_merchant", t('Paypaad merchant code must be a 9-digit numeric value.'));
+  // Check for a numeric merchant code.
+  if (!ctype_digit($form_state['values']["{$id}_paypaad_merchant"])) {
+    form_set_error("{$id}_paypaad_merchant", t('Paypaad merchant code must be a valid numeric value.'));
   }
   // Check terminal code for a 10-digit number. Same drupal_strlen() story here.
   if (!ctype_digit($form_state['values']["{$id}_paypaad_terminal"]) || strlen($form_state['values']["{$id}_paypaad_terminal"]) != 10) {
