@@ -384,7 +384,7 @@ function paypaad_settings_fields(&$form, $id) {
   $form["{$id}_paypaad_merchant"] = array(
     '#type' => 'textfield',
     '#title' => t('Merchant code'),
-    '#description' => t("Enter the merchant code provided by Paypaad"),
+    '#description' => t("Enter the merchant code provided by Paypaad."),
     '#default_value' => paypaad_settings('merchant', $id, ''),
     '#required' => TRUE,
   );
