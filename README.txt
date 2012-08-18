@@ -12,7 +12,6 @@ API Usage
 =========
 Read on:
   - http://github.com/sepehr/uc-paypaad
-  - http://github.com/sepehr/pay-paypaad
 
 Author and Maintainer
 =====================
